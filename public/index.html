@@ -12,7 +12,7 @@
 
     <div ng-controller="mumbleExpressController">
       <div id="messages">
-	<p ng-repeat="msg in msgs">{{msg}}</p>
+	<p ng-repeat="msg in msgs track by $index">{{msg}}</p>
       </div>
       <div id="chatInput">
 	<form ng-submit="sendMsg()">

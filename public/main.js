@@ -10,7 +10,9 @@ app.controller('mumbleExpressController', function($scope, socket){
 
     $scope.sendMsg = function() {
 	socket.emit('send msg', $scope.msg.text);
+	$scope.msgs.push($scope.msg.text);
 	$scope.msg.text = '';
+	$scope.$digest();
     };
 
     socket.on('onText',function(data) {
