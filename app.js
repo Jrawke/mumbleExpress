@@ -11,7 +11,7 @@ function User(socket) {
 	cert: fs.readFileSync( 'public.pem' )
     };
 
-    var socket = socket;
+    var socket = socket.id;
 
     var onInit = function() {
 	console.log( 'Connection initialized' );
@@ -24,6 +24,7 @@ function User(socket) {
 
     var onText = function(data) {
 	console.log(data.message);
+	io.sockets.connected[socket].emit("onText",data);
     };
 
     this.doConnect = function(serverIp, username, password, ket, cert) {

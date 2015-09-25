@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="mumbleExpressApp" ng-controller="mumbleExpressController">
+<html ng-app="mumbleExpressApp">
   <head>
     <title>mumbleExpress</title>
     <script src="/socket.io/socket.io.js"></script>
@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="style.css"/>
   </head>
   <body>
+
+    <div ng-controller="mumbleExpressController">
+      <div id="messages">
+	<p ng-repeat="msg in msgs">{{msg}}</p>
+      </div>
+      <div id="chatInput">
+	<form ng-submit="sendMsg()" action="">
+	  <input type="text" ng-model="msg.text"/>
+	</form>
+      </div>
+    </div>
     
   </body>
 </html>
