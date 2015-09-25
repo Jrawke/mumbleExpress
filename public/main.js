@@ -8,6 +8,11 @@ app.factory('socket', function(){
 app.controller('mumbleExpressController', function($scope, socket){
     $scope.msgs = ['one message'];
 
+    $scope.sendMsg = function() {
+	socket.emit('send msg', $scope.msg.text);
+	$scope.msg.text = '';
+    };
+
     socket.on('onText',function(data) {
 	console.log(data.message);
 	$scope.msgs.push(data.message);

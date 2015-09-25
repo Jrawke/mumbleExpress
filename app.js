@@ -27,35 +27,62 @@ function User(socket) {
 	io.sockets.connected[socket].emit("onText",data);
     };
 
+    var mumbleClient = null;
+
+    this.getMumbleConnection = function() {
+	return mumbleClient;
+    };
+
     this.doConnect = function(serverIp, username, password, ket, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
-	mumble.connect( 'mumble://ball.holdings', options, function ( error, connection ) {
+	mumble.connect( 'mumble://ball.holdings', options, function ( error, client ) {
+	    mumbleClient = client;
 	    if( error ) { throw new Error( error ); }
 
 	    console.log( 'Connected' );
 
-	    connection.authenticate( 'ExampleUser' );
-	    connection.on( 'initialized', onInit );
-	    connection.on( 'voice', onVoice );
-	    connection.on('textMessage', onText );
-	    connection.on('ready', function() { console.log(connection.users());});
+	    client.authenticate( 'ExampleUser' );
+	    client.on( 'initialized', onInit );
+	    client.on( 'voice', onVoice );
+	    client.on('textMessage', onText );
+	    client.on('ready', function() {
+		console.log("client ready");
+		// console.log(client.users());
+	    });
 	});
     };
 }
 
 io.on('connection', function(socket){
     var user = new User(socket);
-    console.log(user);
+    // console.log(user);
     // TODO: wait for user to provide info
     user.doConnect("mumble://ball.holdings", "user", null);
+
     socket.on('server info message', function(message) {
 	var messageObject = JSON.parse(message);
-	user.doConnect(messageObject.serverIp, messageObject.username, messageObject.password, messageObject.key, messageObject.cert);
+	user.doConnect(messageObject.serverIp, 
+		       messageObject.username, 
+		       messageObject.password, 
+		       messageObject.key, 
+		       messageObject.cert);
     });
+
+    socket.on('send msg', function(message) {
+	var recipients = { session: [], channel_id: [] };
+
+	var clients = user.getMumbleConnection().users();
+        for( var c in clients ) {
+            var client = clients[c];
+
+            recipients.session.push( client.session );
+            recipients.channel_id.push( client.channel.id );
+        }
+
+	user.getMumbleConnection().sendMessage(message, recipients);
+    });
+
 });
-
-
-
 
 http.listen(3000, function(){
     console.log('listening on *:3000');
