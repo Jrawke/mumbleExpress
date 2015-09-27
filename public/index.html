@@ -4,20 +4,42 @@
     <title>mumbleExpress</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="angular/angular.min.js"></script>
+    <script src="angular-scroll-glue/src/scrollglue.js"></script>
+    
     <script src="main.js"></script>
-    <link rel="stylesheet" href="foundation/css/foundation.min.css"/>
     <link rel="stylesheet" href="style.css"/>
   </head>
   <body>
 
-    <div ng-controller="mumbleExpressController">
-      <div id="messages">
-	<p ng-repeat="msg in msgs track by $index">{{msg}}</p>
+    <div id="page-container">
+      <div id="header">
+	<p>Weclome to MumbleExpress</p>
       </div>
-      <div id="chatInput">
-	<form ng-submit="sendMsg()">
-	  <input type="text" ng-model="msg.text"/>
-	</form>
+      <div ng-controller="mumbleExpressController">
+	<div id="users">
+
+	  <script type="text/ng-template" id="channelTree">
+	    {{ channel.name }}
+	    <ul ng-if="channel.childChannels">
+	      <li ng-repeat="user in channel.users">{{ user.name }}</li>
+	      <li ng-repeat="channel in channel.childChannels" ng-include="'channelTree'">
+	      </li>
+	    </ul>
+	  </script>
+
+	  <ul>
+	    <li ng-repeat="channel in channelTree.childChannels" ng-include="'channelTree'"></li>
+	  </ul>
+	  
+	</div>
+	<div id="messages" scroll-glue>
+	  <p ng-repeat="msg in msgs track by $index">{{msg.message}}</p>
+	</div>
+	<div id="chatInput">
+	  <form ng-submit="sendMsg()">
+	    <input type="text" ng-model="msg.text"/>
+	  </form>
+	</div>
       </div>
     </div>
     

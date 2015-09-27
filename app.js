@@ -13,6 +13,11 @@ function User(socket) {
 
     var socket = socket.id;
 
+    var mumbleClient = null;
+
+    //store the state of users connected to mumble server
+    var sessions = {}
+
     var onInit = function() {
 	console.log( 'Connection initialized' );
 	// Connection is authenticated and usable.
@@ -23,11 +28,22 @@ function User(socket) {
     };
 
     var onText = function(data) {
-	console.log(data.message);
-	io.sockets.connected[socket].emit("onText",data);
+	var textMessage = {
+	    "userName": sessions[data.actor].name,
+	    "message": data.message
+	}
+	io.sockets.connected[socket].emit("textMessage",textMessage);
     };
 
-    var mumbleClient = null;
+    var onUserState = function(state) {
+	sessions[state.session] = state;
+	console.log(state);
+	io.sockets.connected[socket].emit("userList",state);
+    };
+
+    var onChannelState = function(state) {
+	io.sockets.connected[socket].emit("channelState",state);
+    }
 
     this.getMumbleConnection = function() {
 	return mumbleClient;
@@ -35,7 +51,7 @@ function User(socket) {
 
     this.doConnect = function(serverIp, username, password, ket, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
-	mumble.connect( 'mumble://ball.holdings', options, function ( error, client ) {
+	mumble.connect( 'mumble://104.236.138.219', options, function ( error, client ) {
 	    mumbleClient = client;
 	    if( error ) { throw new Error( error ); }
 
@@ -45,6 +61,8 @@ function User(socket) {
 	    client.on( 'initialized', onInit );
 	    client.on( 'voice', onVoice );
 	    client.on('textMessage', onText );
+	    client.on('userState', onUserState);
+	    client.on('channelState', onChannelState);
 	    client.on('ready', function() {
 		console.log("client ready");
 		// console.log(client.users());

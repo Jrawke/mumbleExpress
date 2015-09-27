@@ -1,0 +1,49 @@
+html, body {
+    margin: 0px;
+    padding: 0px;
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+#page-container {
+    width: 760px;
+    margin: auto;
+}
+
+#header {
+    background: red;
+    height: 50px;
+}
+
+#messages {
+    margin-right: 280px;
+    background: green;
+    height:500px;
+    overflow-y: auto;
+}
+
+#users {
+    float: right;
+    width: 280px;
+    background: yellow;
+    height:500px;
+    overflow-y: auto;
+}
+
+#users p {
+    padding-left: 20px;
+}
+
+#chatInput {
+    clear: both;
+    background: orange;
+    height: 25px;
+}
+
+input {
+    width: 100%;
+    box-sizing: border-box;
+}
