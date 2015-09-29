@@ -38,11 +38,20 @@ function User(socket) {
     var onUserState = function(state) {
 	sessions[state.session] = state;
 	console.log(state);
-	io.sockets.connected[socket].emit("userList",state);
+	io.sockets.connected[socket].emit("userState",state);
+    };
+
+    var onUserRemove = function(state) {
+	delete sessions[state.session];
+	io.sockets.connected[socket].emit("userRemove",state);
     };
 
     var onChannelState = function(state) {
 	io.sockets.connected[socket].emit("channelState",state);
+    }
+
+    var onChannelRemove = function (state) {
+	io.sockets.connected[socket].emit("channelRemove",state);
     }
 
     this.getMumbleConnection = function() {
@@ -57,12 +66,14 @@ function User(socket) {
 
 	    console.log( 'Connected' );
 
-	    client.authenticate( 'ExampleUser' );
+	    client.authenticate( 'ExampleUser1' );
 	    client.on( 'initialized', onInit );
 	    client.on( 'voice', onVoice );
 	    client.on('textMessage', onText );
 	    client.on('userState', onUserState);
+	    client.on('userRemove', onUserRemove);
 	    client.on('channelState', onChannelState);
+	    client.on('channelRemove', onChannelRemove);
 	    client.on('ready', function() {
 		console.log("client ready");
 		// console.log(client.users());

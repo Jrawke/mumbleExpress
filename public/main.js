@@ -40,6 +40,24 @@ function insertUserIntoTree(node, tree) {
     return false;
 }
 
+function deleteUserFromTree(session, tree) {
+    var i=0;
+    for (user of tree.users) {
+	if(user.session == session) {
+	    tree.users.splice(i,1);
+	    return true;
+	}
+	i++;
+    }
+
+    for (child of tree.childChannels) {
+	if(deleteUserFromTree(session,child))
+	    return true;
+    }
+
+    return false;
+}
+
 app.controller('mumbleExpressController', function($scope, socket){
     $scope.msgs = [];
 
@@ -78,24 +96,41 @@ app.controller('mumbleExpressController', function($scope, socket){
 	$scope.$digest();
     });
 
-    socket.on('userList', function(state) {
+    socket.on('userState', function(state) {
+	console.log("userState");
 	console.log(state);
-	if(state.channel_id == null) {
-	    //make those in the root channel a child of the
-	    //root node for cleaner rendering. Why doesn't
-	    //mumble do this by default?
-	    state.channel_id = 0;
+	if(state.name) { // a new user connected
+	    if(state.channel_id == null) {
+		//make those in the root channel a child of the
+		//root node for cleaner rendering. Why doesn't
+		//mumble do this by default?
+		state.channel_id = 0;
+	    }
+	    insertUserIntoTree(state,$scope.channelTree);
 	}
-	insertUserIntoTree(state,$scope.channelTree);
 	$scope.$digest();
 	console.log($scope.channelTree);
     });
 
     socket.on('channelState', function(state) {
+	console.log("channelState");
 	console.log(state);
 	insertChannelIntoTree(state,$scope.channelTree);
 	$scope.$digest();
 	console.log($scope.channelTree);
     });
-    
+
+    socket.on('channelRemove', function(state) {
+	console.log("channelRemove");
+	console.log(state);
+    });
+
+    socket.on('userRemove', function(state) {
+	console.log("userRemove");
+	console.log(state);
+	deleteUserFromTree(state.session,$scope.channelTree);
+	$scope.$digest();
+	console.log($scope.channelTree);
+    });
+
 });
