@@ -58,6 +58,23 @@ function deleteUserFromTree(session, tree) {
     return false;
 }
 
+function getUserFromTree(session, tree) {
+    var i=0;
+    for (user of tree.users) {
+	if(user.session == session)
+	    return user;
+    }
+    i++;
+
+    for (child of tree.childChannels) {
+	var user = getUserFromTree(session,child);
+	if(user!=null)
+	    return user;
+    }
+    
+    return null;
+}
+
 app.controller('mumbleExpressController', function($scope, socket){
     $scope.msgs = [];
 
@@ -100,6 +117,7 @@ app.controller('mumbleExpressController', function($scope, socket){
 	console.log("userState");
 	console.log(state);
 	if(state.name) { // a new user connected
+	    console.log('adding new user');
 	    if(state.channel_id == null) {
 		//make those in the root channel a child of the
 		//root node for cleaner rendering. Why doesn't
@@ -107,6 +125,23 @@ app.controller('mumbleExpressController', function($scope, socket){
 		state.channel_id = 0;
 	    }
 	    insertUserIntoTree(state,$scope.channelTree);
+	}
+	else { //updating something about user info
+	    if(state.channel_id!=null) { //updating user position
+		console.log('moving user position');
+		user = getUserFromTree(state.session,$scope.channelTree);
+		deleteUserFromTree(state.session,$scope.channelTree);
+		user.channel_id=state.channel_id;
+		insertUserIntoTree(user,$scope.channelTree);
+	    }
+	    if(state.self_mute!=null) { //updating user mute/deaf
+		console.log('updating mute/def');
+		user = getUserFromTree(state.session,$scope.channelTree);
+		deleteUserFromTree(state.session,$scope.channelTree);
+		user.self_mute=state.self_mute;
+		user.self_deaf=state.self_deaf;
+		insertUserIntoTree(user,$scope.channelTree);
+	    }
 	}
 	$scope.$digest();
 	console.log($scope.channelTree);

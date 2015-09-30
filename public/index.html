@@ -13,27 +13,41 @@
 
     <div id="page-container">
       <div id="header">
-	<p>Weclome to MumbleExpress</p>
+	  <img src="icons/config_network.png" height="30" width="30" class="mainIcon">
+	  <img src="icons/Information_icon.svg" height="30" width="30" class="mainIcon">
+	  <img src="icons/muted_self.svg" height="30" width="30" class="mainIcon">
+	  <img src="icons/deafened_self.svg" height="30" width="30" class="mainIcon">
+	  <img src="icons/comment.svg" height="30" width="30" class="mainIcon">
+	  <img src="icons/config_basic.png" height="30" width="30" class="mainIcon">
       </div>
       <div ng-controller="mumbleExpressController">
 	<div id="users">
 
 	  <script type="text/ng-template" id="channelTree">
-	    {{ channel.name }}
+	    <span class="channelName">{{ channel.name }}</span>
 	    <ul ng-if="channel.childChannels">
-	      <li ng-repeat="user in channel.users">{{ user.name }}</li>
+	      <li ng-repeat="user in channel.users">
+		<img src="icons/talking_off.svg" height="20" width="20">
+		<span class="listUserName">{{ user.name }}</span>
+		<img ng-if="user.self_mute" src="icons/muted_self.svg" height="20" width="20">
+		<img ng-if="user.self_deaf" src="icons/deafened_self.svg" height="20" width="20">
+	      </li>
 	      <li ng-repeat="channel in channel.childChannels" ng-include="'channelTree'">
 	      </li>
 	    </ul>
 	  </script>
 
-	  <ul>
+	  <ul class="channelTree">
 	    <li ng-repeat="channel in channelTree.childChannels" ng-include="'channelTree'"></li>
 	  </ul>
 	  
 	</div>
 	<div id="messages" scroll-glue>
-	  <p ng-repeat="msg in msgs track by $index">{{msg.message}}</p>
+	  <p ng-repeat="msg in msgs track by $index">
+	    <span class="messageTime">[ {{msg.time}} ] </span>
+	    <span class="messageUserName">{{msg.userName}}</span>
+	    <span class="messageText">: {{msg.message}}</span>
+	  </p>
 	</div>
 	<div id="chatInput">
 	  <form ng-submit="sendMsg()">

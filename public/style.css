@@ -1,6 +1,9 @@
 html, body {
     margin: 0px;
     padding: 0px;
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+    font-size: 10pt;
+    background: #797978;
 }
 
 p {
@@ -8,19 +11,25 @@ p {
     padding: 0px;
 }
 
+.mainIcon {
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}
 #page-container {
     width: 760px;
     margin: auto;
 }
 
 #header {
-    background: red;
+    background: #f2f2f2;
     height: 50px;
 }
 
 #messages {
+    background: #FFFFFF;
     margin-right: 280px;
-    background: green;
     height:500px;
     overflow-y: auto;
 }
@@ -28,9 +37,9 @@ p {
 #users {
     float: right;
     width: 280px;
-    background: yellow;
     height:500px;
     overflow-y: auto;
+    background: #FFFFFF;
 }
 
 #users p {
@@ -38,12 +47,33 @@ p {
 }
 
 #chatInput {
+    background: #f2f2f2;
     clear: both;
-    background: orange;
     height: 25px;
 }
 
 input {
     width: 100%;
     box-sizing: border-box;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.channelTree {
+    
+}
+
+.messageTime {
+    color: #797978;
+}
+
+.messageUserName {
+    color: #27ae60;
+    style: bold;
+}
+
+.messageText {
+
 }

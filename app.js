@@ -60,7 +60,7 @@ function User(socket) {
 
     this.doConnect = function(serverIp, username, password, ket, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
-	mumble.connect( 'mumble://104.236.138.219', options, function ( error, client ) {
+	mumble.connect( 'mumble://104.236.190.239', options, function ( error, client ) {
 	    mumbleClient = client;
 	    if( error ) { throw new Error( error ); }
 
