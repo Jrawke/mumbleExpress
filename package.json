@@ -1,11 +1,15 @@
 {
-    "name" : "mumbleExpress",
-    "version": "0.0.1",
-    "private": true,
-    "author": "Owen Horwitz <owenhorwitz@gmail.com>",
-    "dependencies": {
-	"express": "4.13.x",
-	"mumble": "0.3.3",
-	"socket.io": "1.3.x"
-    }
+  "name": "mumbleExpress",
+  "version": "0.0.1",
+  "private": true,
+  "author": "Owen Horwitz <owenhorwitz@gmail.com>",
+  "dependencies": {
+    "angular": "^1.4.7",
+    "angular-modal-service": "^0.6.9",
+    "angular-route": "^1.4.7",
+    "angularjs-scroll-glue": "^2.0.4",
+    "express": "^4.13.3",
+    "mumble": "^0.3.4",
+    "socket.io": "^1.3.7"
+  }
 }
