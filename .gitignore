@@ -1,5 +1,11 @@
 node_modules/
 *~
-#*#
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
 public.pem
 private.pem
