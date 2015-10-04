@@ -90,8 +90,10 @@ function User(socket) {
     };
 
     this.disconnect = function() {
-	if(mumbleClient)
+	if(mumbleClient) {
 	    mumbleClient.disconnect();
+	    console.log('disconnected');
+	}
     }
 }
 
