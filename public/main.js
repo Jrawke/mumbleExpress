@@ -184,7 +184,6 @@ app.controller('mumbleExpressController', function($scope, socket){
     });
 
     socket.on('userState', function(state) {
-	console.log(state);
 	if(state.name) { // a new user connected
 	    if(state.channel_id == null) {
 		//make those in the root channel a child of the
@@ -215,14 +214,10 @@ app.controller('mumbleExpressController', function($scope, socket){
     });
 
     socket.on('channelState', function(state) {
-	console.log(state);
 	insertChannelIntoTree(state,$scope.channelTree);
-	console.log('finished inserting');
     });
 
     socket.on('channelRemove', function(state) {
-	console.log("channelRemove");
-	console.log(state);
 	deleteChannelFromTree(state.channel_id,$scope.channelTree);
     });
 

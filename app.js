@@ -11,6 +11,7 @@ var MUMBLE_OPTIONS = {
     cert: fs.readFileSync( 'ssl/mumble/cert.crt' )
 };
 var https = require('https').createServer(HTTPS_OPTIONS,app);
+var http = require('http').createServer(app);
 var io = require('socket.io')(https);
 var mumble = require('mumble');
 
@@ -42,7 +43,6 @@ function User(socket) {
 
     var onUserState = function(state) {
 	sessions[state.session] = state;
-	console.log("got user info");
 	io.sockets.connected[socket].emit("userState",state);
     };
 
@@ -97,13 +97,10 @@ function User(socket) {
 
 io.on('connection', function(socket){
     var user = new User(socket);
-    // console.log(user);
     // TODO: wait for user to provide info
 
     socket.on('login', function(loginInfo) {
-	console.log(loginInfo);
 	var password = loginInfo.password == '' ? null : loginInfo.password;
-	console.log(password);
 	var serverAddress = 'mumble://'+loginInfo.ip+':'+loginInfo.port;
 	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password);
     });
@@ -128,9 +125,22 @@ io.on('connection', function(socket){
 
 });
 
+function ensureSecure(req, res, next){
+    if(req.secure){
+	// OK, continue
+	return next();
+    };
+    res.redirect('https://'+req.hostname+req.url); // handle port numbers if you need non defaults
+};
 
-https.listen(3000, function(){
-    console.log('listening on *:3000');
+app.all('*', ensureSecure); // at top of routing calls
+
+https.listen(443, function(){
+    console.log('listening on *:443');
+});
+
+http.listen(80, function(){
+    console.log('listening on *:80');
 });
 
 app.use(express.static(__dirname + '/public'));
