@@ -69,7 +69,6 @@ function User(socket) {
 	    mumbleClient = client;
 	    if( error ) {
 		io.sockets.connected[socket].emit("error","Could not connect");
-		throw new Error( error );
 	    }
 
 	    console.log( 'Connected' );
