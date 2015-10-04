@@ -118,12 +118,12 @@ app.controller('mumbleExpressController', function($scope, socket){
 	    var d = new Date();
 	    var textMessage = {
 		"userName": "mumbleExpress",
-		"message": "Enter port",
+		"message": "Enter port (if blank, will be default of 64738)",
 		"time": ''+d.getHours()+':'+d.getMinutes()
 	    }
 	}
 	else if(loginState == 1) { //port
-	    loginInfo.port = $scope.msg.text;
+	    loginInfo.port = $scope.msg.text == '' ? "64738" : $scope.msg.text;
 	    loginState++;
 	    var d = new Date();
 	    var textMessage = {
@@ -164,14 +164,14 @@ app.controller('mumbleExpressController', function($scope, socket){
 	$scope.msg.text = '';
     };
 
-    socket.on('error', function(errorMessage) {
+    socket.on('errorMessage', function(errorMessage) {
 	var d = new Date();
 	var textMessage = {
 	    "userName": "mumbleExpress",
 	    "message": errorMessage,
 	    "time": ''+d.getHours()+':'+d.getMinutes()
 	}
-	$scope.msgs.push(errorMessage);
+	$scope.msgs.push(textMessage);
     });
     
     socket.on('textMessage', function(textMessage) {

@@ -66,25 +66,31 @@ function User(socket) {
     this.doConnect = function(serverAddress, username, password, key, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
 	mumble.connect( serverAddress, MUMBLE_OPTIONS, function ( error, client ) {
-	    mumbleClient = client;
-	    if( error ) {
-		io.sockets.connected[socket].emit("error","Could not connect");
+	    try {
+		mumbleClient = client;
+		if( error ) {
+		    io.sockets.connected[socket].emit("errorMessage","Could not connect");
+		    throw new Error( error );
+		}
+
+		console.log( 'Connected' );
+
+		client.authenticate( username );
+		client.on( 'initialized', onInit );
+		client.on( 'voice', onVoice );
+		client.on('textMessage', onText );
+		client.on('userState', onUserState);
+		client.on('userRemove', onUserRemove);
+		client.on('channelState', onChannelState);
+		client.on('channelRemove', onChannelRemove);
+		client.on('ready', function() {
+		    console.log("client ready");
+		    // console.log(client.users());
+		});
 	    }
-
-	    console.log( 'Connected' );
-
-	    client.authenticate( username );
-	    client.on( 'initialized', onInit );
-	    client.on( 'voice', onVoice );
-	    client.on('textMessage', onText );
-	    client.on('userState', onUserState);
-	    client.on('userRemove', onUserRemove);
-	    client.on('channelState', onChannelState);
-	    client.on('channelRemove', onChannelRemove);
-	    client.on('ready', function() {
-		console.log("client ready");
-		// console.log(client.users());
-	    });
+	    catch(e) {
+		io.sockets.connected[socket].disconnect('fail');
+	    }
 	});
     };
 
