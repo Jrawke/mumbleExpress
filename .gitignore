@@ -1,4 +1,5 @@
 node_modules/
+ssl/
 *~
 \#*\#
 /.emacs.desktop
@@ -7,5 +8,3 @@ node_modules/
 auto-save-list
 tramp
 .\#*
-public.pem
-private.pem

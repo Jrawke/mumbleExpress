@@ -1,15 +1,20 @@
 var express = require('express');
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var mumble = require('mumble');
 var fs = require('fs');
+var HTTPS_OPTIONS = {
+    ca: fs.readFileSync( 'ssl/https/sub.class1.server.sha2.ca.pem' ),
+    key: fs.readFileSync( 'ssl/https/mumbleexpress.key' ),
+    cert: fs.readFileSync( 'ssl/https/mumbleexpress.crt' )
+};
+var MUMBLE_OPTIONS = {
+    key: fs.readFileSync( 'ssl/mumble/private.key' ),
+    cert: fs.readFileSync( 'ssl/mumble/cert.crt' )
+};
+var https = require('https').createServer(HTTPS_OPTIONS,app);
+var io = require('socket.io')(https);
+var mumble = require('mumble');
 
 function User(socket) {
-    var options = {
-	key: fs.readFileSync( 'private.pem' ),
-	cert: fs.readFileSync( 'public.pem' )
-    };
 
     var socket = socket.id;
 
@@ -60,7 +65,7 @@ function User(socket) {
 
     this.doConnect = function(serverAddress, username, password, key, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
-	mumble.connect( serverAddress, options, function ( error, client ) {
+	mumble.connect( serverAddress, MUMBLE_OPTIONS, function ( error, client ) {
 	    mumbleClient = client;
 	    if( error ) {
 		io.sockets.connected[socket].emit("error","Could not connect");
@@ -123,7 +128,8 @@ io.on('connection', function(socket){
 
 });
 
-http.listen(3000, function(){
+
+https.listen(3000, function(){
     console.log('listening on *:3000');
 });
 
