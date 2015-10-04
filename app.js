@@ -83,6 +83,11 @@ function User(socket) {
 	    });
 	});
     };
+
+    this.disconnect = function() {
+	if(mumbleClient)
+	    mumbleClient.disconnect();
+    }
 }
 
 io.on('connection', function(socket){
@@ -93,6 +98,7 @@ io.on('connection', function(socket){
     socket.on('login', function(loginInfo) {
 	console.log(loginInfo);
 	var password = loginInfo.password == '' ? null : loginInfo.password;
+	console.log(password);
 	var serverAddress = 'mumble://'+loginInfo.ip+':'+loginInfo.port;
 	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password);
     });
@@ -109,6 +115,10 @@ io.on('connection', function(socket){
         }
 
 	user.getMumbleConnection().sendMessage(message, recipients);
+    });
+
+    socket.on('disconnect', function() {
+	user.disconnect();
     });
 
 });
