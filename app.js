@@ -37,7 +37,7 @@ function User(socket) {
 
     var onUserState = function(state) {
 	sessions[state.session] = state;
-	console.log(state);
+	console.log("got user info");
 	io.sockets.connected[socket].emit("userState",state);
     };
 
@@ -58,11 +58,14 @@ function User(socket) {
 	return mumbleClient;
     };
 
-    this.doConnect = function(serverIp, username, password, ket, cert) {
+    this.doConnect = function(serverAddress, username, password, key, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
-	mumble.connect( 'mumble://104.236.190.239', options, function ( error, client ) {
+	mumble.connect( serverAddress, options, function ( error, client ) {
 	    mumbleClient = client;
-	    if( error ) { throw new Error( error ); }
+	    if( error ) {
+		io.sockets.connected[socket].emit("error","Could not connect");
+		throw new Error( error );
+	    }
 
 	    console.log( 'Connected' );
 
@@ -86,15 +89,12 @@ io.on('connection', function(socket){
     var user = new User(socket);
     // console.log(user);
     // TODO: wait for user to provide info
-    user.doConnect("mumble://ball.holdings", "user", null);
 
-    socket.on('server info message', function(message) {
-	var messageObject = JSON.parse(message);
-	user.doConnect(messageObject.serverIp, 
-		       messageObject.username, 
-		       messageObject.password, 
-		       messageObject.key, 
-		       messageObject.cert);
+    socket.on('login', function(loginInfo) {
+	console.log(loginInfo);
+	var password = loginInfo.password == '' ? null : loginInfo.password;
+	var serverAddress = 'mumble://'+loginInfo.ip+':'+loginInfo.port;
+	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password);
     });
 
     socket.on('send msg', function(message) {

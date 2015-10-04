@@ -1,27 +1,7 @@
-var app = angular.module('mumbleExpressApp', ['luegg.directives']);
+var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket-io']);
 
-app.factory('socket', function ($rootScope) {
-    var socket = io();
-    return {
-	on: function (eventName, callback) {
-	    socket.on(eventName, function () {
-		var args = arguments;
-		$rootScope.$apply(function () {
-		    callback.apply(socket, args);
-		});
-	    });
-	},
-	emit: function (eventName, data, callback) {
-	    socket.emit(eventName, data, function () {
-		var args = arguments;
-		$rootScope.$apply(function () {
-		    if (callback) {
-			callback.apply(socket, args);
-		    }
-		});
-	    })
-	}
-    };
+app.factory('socket', function (socketFactory) {
+    return socketFactory();
 });
 
 function insertChannelIntoTree(node, tree) {
@@ -110,10 +90,15 @@ function getUserFromTree(session, tree) {
 }
 
 app.controller('mumbleExpressController', function($scope, socket){
-    $scope.msgs = [];
-
-    //todo: set this dynamically based on user input
-    $scope.userName = "ExampleUser";
+    var d = new Date();
+    $scope.msgs = [
+	{
+	    "userName": "mumbleExpress",
+	    "message": "Enter server ip",
+	    "time": ''+d.getHours()+':'+d.getMinutes()
+	}
+    ];
+    d = null;
 
     $scope.channelTree = {
 	"name": null,
@@ -122,21 +107,74 @@ app.controller('mumbleExpressController', function($scope, socket){
 	"users": []
     };
     
-    $scope.usersList = {};
-
+    var loginState = 0;
+    var loginInfo = {};
+    
     $scope.sendMsg = function() {
-	socket.emit('send msg', $scope.msg.text);
-	var d = new Date();
-	var textMessage = {
-	    "userName": $scope.userName,
-	    "message": $scope.msg.text,
-	    "time": ''+d.getHours()+':'+d.getMinutes()
+	//connect to the server using first few messages as info
+	if(loginState == 0) { //server ip
+	    loginInfo.ip = $scope.msg.text;
+	    loginState++;
+	    var d = new Date();
+	    var textMessage = {
+		"userName": "mumbleExpress",
+		"message": "Enter port",
+		"time": ''+d.getHours()+':'+d.getMinutes()
+	    }
+	}
+	else if(loginState == 1) { //port
+	    loginInfo.port = $scope.msg.text;
+	    loginState++;
+	    var d = new Date();
+	    var textMessage = {
+		"userName": "mumbleExpress",
+		"message": "Enter user name",
+		"time": ''+d.getHours()+':'+d.getMinutes()
+	    }
+	}
+	else if(loginState == 2) { //username
+	    loginInfo.userName = $scope.msg.text;
+	    loginState++;
+	    var d = new Date();
+	    var textMessage = {
+		"userName": "mumbleExpress",
+		"message": "Enter password",
+		"time": ''+d.getHours()+':'+d.getMinutes()
+	    }
+	}
+	else if(loginState == 3) { //password
+	    loginInfo.password = $scope.msg.text;
+	    loginState++;
+	    //transmit info to server
+	    socket.emit('login', loginInfo);
+	    $scope.msg.text = '';
+	    return;
+	}
+	else {
+	    //else, sending message
+	    socket.emit('send msg', $scope.msg.text);
+	    var d = new Date();
+	    var textMessage = {
+		"userName": loginInfo.userName,
+		"message": $scope.msg.text,
+		"time": ''+d.getHours()+':'+d.getMinutes()
+	    }
 	}
 	$scope.msgs.push(textMessage);
 	$scope.msg.text = '';
     };
 
-    socket.on('textMessage',function(textMessage) {
+    socket.on('error', function(errorMessage) {
+	var d = new Date();
+	var textMessage = {
+	    "userName": "mumbleExpress",
+	    "message": errorMessage,
+	    "time": ''+d.getHours()+':'+d.getMinutes()
+	}
+	$scope.msgs.push(errorMessage);
+    });
+    
+    socket.on('textMessage', function(textMessage) {
 	//append local time to textMessage object as string
 	//(collected on client so locality is not an issue)
 	var d = new Date();
@@ -146,6 +184,7 @@ app.controller('mumbleExpressController', function($scope, socket){
     });
 
     socket.on('userState', function(state) {
+	console.log(state);
 	if(state.name) { // a new user connected
 	    if(state.channel_id == null) {
 		//make those in the root channel a child of the
@@ -176,7 +215,9 @@ app.controller('mumbleExpressController', function($scope, socket){
     });
 
     socket.on('channelState', function(state) {
+	console.log(state);
 	insertChannelIntoTree(state,$scope.channelTree);
+	console.log('finished inserting');
     });
 
     socket.on('channelRemove', function(state) {
