@@ -69,7 +69,7 @@ function User(socket) {
 
 	    console.log( 'Connected' );
 
-	    client.authenticate( 'ExampleUser1' );
+	    client.authenticate( username );
 	    client.on( 'initialized', onInit );
 	    client.on( 'voice', onVoice );
 	    client.on('textMessage', onText );
