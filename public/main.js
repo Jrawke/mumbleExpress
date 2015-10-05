@@ -1,4 +1,4 @@
-var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket-io']);
+var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket-io','notification']);
 
 app.factory('socket', function (socketFactory) {
     return socketFactory();
@@ -89,21 +89,19 @@ function getUserFromTree(session, tree) {
     return null;
 }
 
+app.controller('mumbleExpressController', function($scope, $notification, socket){
 
-function sendNotification(username, time, message) {
-	Notification.requestPermission(function(permission){
-		var notification = new Notification(username + " sent a message at " + time, {body: message,icon:'icon.png',dir:'auto'});
-		setTimeout(function(){
-				notification.close();
-			},8000);
-		});
-}
-//request notification access
-document.addEventListener('DOMContentLoaded',function(){
-		Notification.requestPermission(function(permission){});
-});
+    //set up html5 notifications
+    function notify(textMessage) {
+	var notification = $notification('New message', {
+	    body: textMessage.userName+':'+textMessage.message,
+	    delay: 2000
+	});
+    }
 
-app.controller('mumbleExpressController', function($scope, socket){
+    $notification.requestPermission();
+    
+    //set up message box
     var d = new Date();
     $scope.msgs = [
 	{
@@ -196,7 +194,7 @@ app.controller('mumbleExpressController', function($scope, socket){
 
 	//receive remote message
 	$scope.msgs.push(textMessage);
-	sendNotification(textMessage['userName'], textMessage['time'], textMessage['message']);
+	notify(textMessage);
     });
 
     socket.on('userState', function(state) {
