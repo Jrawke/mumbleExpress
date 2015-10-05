@@ -42,7 +42,8 @@ function User(socket) {
     };
 
     var onUserState = function(state) {
-	sessions[state.session] = state;
+	if(!(state.session in sessions)) //new user connection
+	    sessions[state.session] = state;
 	io.sockets.connected[socket].emit("userState",state);
     };
 
