@@ -93,10 +93,13 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
     //set up html5 notifications
     function notify(textMessage) {
-	var notification = $notification('New message', {
-	    body: textMessage.userName+':'+textMessage.message,
-	    delay: 2000
-	});
+	var notification = $notification(textMessage.userName + " sent a message at " + textMessage.time, {
+		body: textMessage.message,
+		//icon:'icon.png',
+		dir:'auto',
+		focusWindowOnClick: true,
+		delay: 8000
+		});
     }
 
     $notification.requestPermission();
