@@ -89,6 +89,20 @@ function getUserFromTree(session, tree) {
     return null;
 }
 
+
+function sendNotification(username, time, message) {
+	Notification.requestPermission(function(permission){
+		var notification = new Notification(username + " sent a message at " + time, {body: message,icon:'icon.png',dir:'auto'});
+		setTimeout(function(){
+				notification.close();
+			},8000);
+		});
+}
+//request notification access
+document.addEventListener('DOMContentLoaded',function(){
+		Notification.requestPermission(function(permission){});
+});
+
 app.controller('mumbleExpressController', function($scope, socket){
     var d = new Date();
     $scope.msgs = [
@@ -180,7 +194,9 @@ app.controller('mumbleExpressController', function($scope, socket){
 	var d = new Date();
 	textMessage["time"]=''+d.getHours()+':'+d.getMinutes();
 
+	//receive remote message
 	$scope.msgs.push(textMessage);
+	sendNotification(textMessage['userName'], textMessage['time'], textMessage['message']);
     });
 
     socket.on('userState', function(state) {
