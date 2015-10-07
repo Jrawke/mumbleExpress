@@ -90,7 +90,8 @@ function User(socket) {
 		});
 	    }
 	    catch(e) {
-		io.sockets.connected[socket].disconnect('fail');
+		if(io.sockets.connected[socket])
+		    io.sockets.connected[socket].disconnect('fail');
 	    }
 	});
     };
