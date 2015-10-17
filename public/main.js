@@ -1,89 +1,48 @@
-var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket-io','notification']);
+var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket-io','notification', 'ui.tree']);
 
 app.factory('socket', function (socketFactory) {
     return socketFactory();
 });
 
-function insertChannelIntoTree(node, tree) {
-    if(node.parent == tree.channel) {
-	tree.childChannels.push(
-	    {
-		"name": node.name,
-		"channel": node.channel_id,
-		"childChannels": [],
-		"users": []
-	    }
-	);
+function insertIntoTree(node, parentChannel, tree) {
+    if(parentChannel==null) { //root
+	tree.push(node);
 	return true;
     }
-
-    for (child of tree.childChannels) {
-	if(insertChannelIntoTree(node,child))
+    for (child of tree) {
+	if(child.isChannel && child.channelId == parentChannel) {
+	    child.children.push(node);
 	    return true;
-    }
-
+	}
+	else if(insertIntoTree(node, parentChannel, child.children))
+	    return true;
+    }	
     return false;
 }
 
-function deleteChannelFromTree(channelId, tree) {
+function deleteFromTree(isChannel, id, tree) {
     var i=0;
-    for (childChannel of tree.childChannels) {
-	if(childChannel.channel == channelId) {
-	    tree.childChannels.splice(i,1);
+    for (child of tree) {
+	if( (isChannel == child.isChannel)
+	    && ((isChannel? child.channelId : child.session) == id)) {
+	    tree.splice(i,1);
 	    return true;
 	}
-	else if(deleteChannelFromTree(channelId,childChannel))
+	else if(deleteFromTree(isChannel,id,child.children))
 	    return true;
 	i++;
     }
-
     return false;
 }
 
-function insertUserIntoTree(node, tree) {
-    if(node.channel_id == tree.channel) {
-	tree.users.push(node);
-	return true;
-    }
+function getFromTree(isChannel, id, tree) {
+    for (child of tree) {
+	if((isChannel? child.channelId : child.session) == id)
+	    return child;
 
-    for (child of tree.childChannels) {
-	if(insertUserIntoTree(node,child))
-	    return true;
-    }
-    
-    return false;
-}
-
-function deleteUserFromTree(session, tree) {
-    var i=0;
-    for (user of tree.users) {
-	if(user.session == session) {
-	    tree.users.splice(i,1);
-	    return true;
-	}
-	i++;
-    }
-
-    for (child of tree.childChannels) {
-	if(deleteUserFromTree(session,child))
-	    return true;
-    }
-
-    return false;
-}
-
-function getUserFromTree(session, tree) {
-    var i=0;
-    for (user of tree.users) {
-	if(user.session == session)
-	    return user;
-    }
-    i++;
-
-    for (child of tree.childChannels) {
-	var user = getUserFromTree(session,child);
-	if(user!=null)
-	    return user;
+	var res = getFromTree(isChannel,id,child.children);
+	if(res)
+	    return res;
     }
     
     return null;
@@ -115,12 +74,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     ];
     d = null;
 
-    $scope.channelTree = {
-	"name": null,
-	"channel": null,
-	"childChannels": [],
-	"users": []
-    };
+    $scope.channelTree = [];
     
     var loginState = 0;
     var loginInfo = {};
@@ -200,46 +154,81 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	notify(textMessage);
     });
 
+   
     socket.on('userState', function(state) {
 	if(state.name) { // a new user connected
-	    if(state.channel_id == null) {
+
+	    //create a node object for insertion into tree
+	    var node = {
+		"name": state.name,
+		"session": state.session,
+		
+		"isChannel": false,
+		"channelId": null,
+		
+		"muted": (state.self_mute || state.self_deaf),
+		"deafened": state.self_deaf,
+
+		"children": []
+	    };
+
+	    var parentChannel = state.channel_id;
+	    if(parentChannel == null) {
 		//make those in the root channel a child of the
 		//root node for cleaner rendering. Why doesn't
 		//mumble do this by default?
-		state.channel_id = 0;
+		parentChannel = 0;
 	    }
-	    insertUserIntoTree(state,$scope.channelTree);
+	    insertIntoTree(node,parentChannel,$scope.channelTree);
+	    return;
 	}
 	
 	//update user info
-	user = getUserFromTree(state.session,$scope.channelTree);
-	if(state.channel_id!=null) //updating user position
-	    user.channel_id=state.channel_id;
+	node = getFromTree(false,state.session,$scope.channelTree);
+
+	if(state.channel_id!=null) { //updating user position
+	    deleteFromTree(false, state.session,$scope.channelTree);
+	    insertIntoTree(node,state.channel_id,$scope.channelTree);
+	}
 
 	if(state.self_deaf==true) //user deafened, must be mute also
-	    user.self_deaf = user.self_mute = true;
+	    node.deafened = state.self_mute = true;
 
-	if(state.self_deaf==false) //user deafened
-	    user.self_deaf = false;
+	if(state.self_deaf==false) //user undeafened
+	    node.deafened = false;
 
 	if(state.self_mute!=null) //updating user mute
-	    user.self_mute=state.self_mute;
-
-	//replace user with updated version in tree
-	deleteUserFromTree(state.session,$scope.channelTree);
-	insertUserIntoTree(user,$scope.channelTree);
+	    node.muted=state.self_mute;
     });
 
     socket.on('channelState', function(state) {
-	insertChannelIntoTree(state,$scope.channelTree);
+	console.log(state);
+	var node = {
+	    "name": state.name,
+	    "session": null,
+	    
+	    "isChannel": true,
+	    "channelId": state.channel_id,
+	    
+	    "muted": state.self_mute,
+	    "deafened": state.self_deaf,
+	    
+	    "children": []
+	};
+	insertIntoTree(node,state.parent,$scope.channelTree);
+	console.log($scope.channelTree);
     });
 
     socket.on('channelRemove', function(state) {
-	deleteChannelFromTree(state.channel_id,$scope.channelTree);
+	console.log(state);
+	deleteFromTree(true, state.channel_id,$scope.channelTree);
+	console.log($scope.channelTree);
     });
 
     socket.on('userRemove', function(state) {
-	deleteUserFromTree(state.session,$scope.channelTree);
+	console.log(state);
+	deleteFromTree(false, state.session,$scope.channelTree);
+	console.log($scope.channelTree);
     });
 
 });

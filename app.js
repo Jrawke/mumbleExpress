@@ -154,3 +154,6 @@ http.listen(80, function(){
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/node_modules'));
+
+//todo: try to remove bower and install angular-ui-tree with npm
+app.use(express.static(__dirname + '/bower_components'));

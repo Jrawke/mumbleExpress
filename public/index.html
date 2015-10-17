@@ -8,9 +8,11 @@
     <script src="angular-route/angular-route.js"></script>
     <script src="angular-socket-io/socket.min.js"></script>
     <script src="angular-notification/angular-notification.js"></script>
+    <script src="angular-ui-tree/dist/angular-ui-tree.js"></script>
     
     <script src="main.js"></script>
     <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="angular-ui-tree/dist/angular-ui-tree.min.css">
   </head>
   <body>
 
@@ -25,24 +27,24 @@
       </div>
       <div ng-controller="mumbleExpressController">
 	<div id="users">
-
-	  <script type="text/ng-template" id="channelTree">
-	    <span class="channelName">{{ channel.name }}</span>
-	    <ul ng-if="channel.childChannels">
-	      <li ng-repeat="user in channel.users">
-		<img src="icons/talking_off.svg" height="20" width="20">
-		<span class="listUserName">{{ user.name }}</span>
-		<img ng-if="user.self_mute" src="icons/muted_self.svg" height="20" width="20">
-		<img ng-if="user.self_deaf" src="icons/deafened_self.svg" height="20" width="20">
+	  
+	  <script type="text/ng-template" id="nodes_renderer.html">
+	    <div ui-tree-handle>
+	      <img ng-if="!node.isChannel" src="icons/talking_off.svg" height="20" width="20">
+	      {{node.name}}
+	      <img ng-if="node.muted" src="icons/muted_self.svg" height="20" width="20">
+	      <img ng-if="node.deafened" src="icons/deafened_self.svg" height="20" width="20">
+	    </div>
+	    <ol ui-tree-nodes="" ng-model="node.children">
+	      <li ng-repeat="node in node.children" ui-tree-node ng-include="'nodes_renderer.html'">
 	      </li>
-	      <li ng-repeat="channel in channel.childChannels" ng-include="'channelTree'">
-	      </li>
-	    </ul>
+	    </ol>
 	  </script>
-
-	  <ul class="channelTree">
-	    <li ng-repeat="channel in channelTree.childChannels" ng-include="'channelTree'"></li>
-	  </ul>
+	  <div ui-tree>
+	    <ol ui-tree-nodes="" ng-model="channelTree" id="tree-root">
+	      <li ng-repeat="node in channelTree" ui-tree-node ng-include="'nodes_renderer.html'"></li>
+	    </ol>
+	  </div>
 	  
 	</div>
 	<div id="messages" scroll-glue>
