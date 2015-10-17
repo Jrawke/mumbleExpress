@@ -132,6 +132,19 @@ io.on('connection', function(socket){
 	user.disconnect();
     });
 
+    socket.on('change channels', function(channelSwitch, successFunction) {
+
+	if(channelSwitch.isChannel) {
+	    //todo: support this
+	    successFunction(false);
+	}
+	else {
+	    var movingUser = user.getMumbleConnection().userBySession(channelSwitch.id);
+	    movingUser.moveToChannel(channelSwitch.channelName);
+	    successFunction(true);
+	}
+    });
+
 });
 
 function ensureSecure(req, res, next){

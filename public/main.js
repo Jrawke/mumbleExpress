@@ -62,7 +62,29 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     }
 
     $notification.requestPermission();
+
+    var allowedSwitch = false;
     
+    //set up dynamic tree view callbacks
+    $scope.treeOptions = {
+	beforeDrop: function(event) {
+	    var src = event.source.nodeScope.$modelValue;
+	    var dst = event.dest.nodesScope.$parent.$modelValue;
+	    if(!dst.isChannel)
+		return false;
+	    var channelSwitch = {
+		"isChannel": src.isChannel,
+		"id": src.isChannel? src.channelId : src.session,
+		"channelName": dst.name
+	    };
+	    socket.emit('change channels', channelSwitch, function(success) {
+		allowedSwitch = success;
+	    });
+
+	    return allowedSwitch;
+	}
+    };
+
     //set up message box
     var d = new Date();
     $scope.msgs = [
@@ -202,7 +224,6 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     });
 
     socket.on('channelState', function(state) {
-	console.log(state);
 	var node = {
 	    "name": state.name,
 	    "session": null,
@@ -216,19 +237,14 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	    "children": []
 	};
 	insertIntoTree(node,state.parent,$scope.channelTree);
-	console.log($scope.channelTree);
     });
 
     socket.on('channelRemove', function(state) {
-	console.log(state);
 	deleteFromTree(true, state.channel_id,$scope.channelTree);
-	console.log($scope.channelTree);
     });
 
     socket.on('userRemove', function(state) {
-	console.log(state);
 	deleteFromTree(false, state.session,$scope.channelTree);
-	console.log($scope.channelTree);
     });
 
 });

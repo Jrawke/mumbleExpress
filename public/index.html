@@ -40,7 +40,7 @@
 	      </li>
 	    </ol>
 	  </script>
-	  <div ui-tree>
+	  <div ui-tree="treeOptions">
 	    <ol ui-tree-nodes="" ng-model="channelTree" id="tree-root">
 	      <li ng-repeat="node in channelTree" ui-tree-node ng-include="'nodes_renderer.html'"></li>
 	    </ol>
