@@ -6,7 +6,7 @@
   "dependencies": {
     "angular": "^1.4.7",
     "angular-modal-service": "^0.6.9",
-    "angular-notification": "^1.1.1",
+    "angular-notification": "~1.1.1",
     "angular-route": "^1.4.7",
     "angular-socket-io": "^0.7.0",
     "angularjs-scroll-glue": "^2.0.4",

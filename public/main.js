@@ -63,10 +63,9 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
     $notification.requestPermission();
 
-    var allowedSwitch = false;
-    
     //set up dynamic tree view callbacks
     $scope.treeOptions = {
+	accept: function(a,b,c) {console.log("hello"); return false;},
 	beforeDrop: function(event) {
 	    var src = event.source.nodeScope.$modelValue;
 	    var dst = event.dest.nodesScope.$parent.$modelValue;
@@ -77,11 +76,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		"id": src.isChannel? src.channelId : src.session,
 		"channelName": dst.name
 	    };
-	    socket.emit('change channels', channelSwitch, function(success) {
-		allowedSwitch = success;
-	    });
-
-	    return allowedSwitch;
+	    socket.emit('change channels', channelSwitch);
 	}
     };
 

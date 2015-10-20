@@ -60,6 +60,10 @@ function User(socket) {
 	io.sockets.connected[socket].emit("channelRemove",state);
     }
 
+    var onError = function (err) {
+	console.log(err);
+    }
+
     this.getMumbleConnection = function() {
 	return mumbleClient;
     };
@@ -77,13 +81,14 @@ function User(socket) {
 		console.log( 'Connected' );
 
 		client.authenticate( username );
-		client.on( 'initialized', onInit );
-		client.on( 'voice', onVoice );
+		client.on('initialized', onInit );
+		client.on('voice', onVoice );
 		client.on('textMessage', onText );
 		client.on('userState', onUserState);
 		client.on('userRemove', onUserRemove);
 		client.on('channelState', onChannelState);
 		client.on('channelRemove', onChannelRemove);
+		client.on('error', onError);
 		client.on('ready', function() {
 		    console.log("client ready");
 		    // console.log(client.users());
@@ -132,16 +137,13 @@ io.on('connection', function(socket){
 	user.disconnect();
     });
 
-    socket.on('change channels', function(channelSwitch, successFunction) {
-
+    socket.on('change channels', function(channelSwitch) {
 	if(channelSwitch.isChannel) {
 	    //todo: support this
-	    successFunction(false);
 	}
 	else {
 	    var movingUser = user.getMumbleConnection().userBySession(channelSwitch.id);
 	    movingUser.moveToChannel(channelSwitch.channelName);
-	    successFunction(true);
 	}
     });
 
