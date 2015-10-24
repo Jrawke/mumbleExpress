@@ -65,18 +65,23 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
     //set up dynamic tree view callbacks
     $scope.treeOptions = {
-	accept: function(a,b,c) {console.log("hello"); return false;},
-	beforeDrop: function(event) {
-	    var src = event.source.nodeScope.$modelValue;
-	    var dst = event.dest.nodesScope.$parent.$modelValue;
-	    if(!dst.isChannel)
-		return false;
+	dropped: function(event) {
+	    var srcObj = event.source.nodeScope.$modelValue;
+	    var srcParent = event.source.nodeScope.$parentNodeScope.$modelValue;
+	    var dstParent = event.dest.nodesScope.$parent.$modelValue;
+
 	    var channelSwitch = {
-		"isChannel": src.isChannel,
-		"id": src.isChannel? src.channelId : src.session,
-		"channelName": dst.name
+		"isChannel": srcObj.isChannel,
+		"id": srcObj.isChannel? srcObj.channelId : srcObj.session,
+		"channelName": dstParent.name
 	    };
 	    socket.emit('change channels', channelSwitch);
+
+	    //move node back to original position in tree.
+	    //if the position changes, server will tell us
+	    srcObjId = srcObj.isChannel? srcObj.channelId : srcObj.session;
+	    deleteFromTree(srcObj.isChannel, srcObjId, $scope.channelTree);
+	    insertIntoTree(srcObj, srcParent.channelId ,$scope.channelTree);
 	}
     };
 

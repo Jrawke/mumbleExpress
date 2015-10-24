@@ -61,7 +61,7 @@ function User(socket) {
     }
 
     var onError = function (err) {
-	console.log(err);
+	io.sockets.connected[socket].emit("errorMessage",err.message);
     }
 
     this.getMumbleConnection = function() {
@@ -111,9 +111,12 @@ function User(socket) {
 
 io.on('connection', function(socket){
     var user = new User(socket);
-    // TODO: wait for user to provide info
 
     socket.on('login', function(loginInfo) {
+	if(loginInfo.userName == '') {
+	    socket.emit("errorMessage","Invalid username");
+	    return;
+	}
 	var password = loginInfo.password == '' ? null : loginInfo.password;
 	var serverAddress = 'mumble://'+loginInfo.ip+':'+loginInfo.port;
 	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password);
