@@ -1,87 +1,174 @@
+/* line 5, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
+  display: block;
+}
+
+/* Colors */
+/* Colors - For Light Theme (default) */
+/* Colors - For Dark Theme */
+/*
+$body-background: $cool-gray;
+$header-color: $dark-blue;
+$accent-color: $cool-dark-gray;
+$content-background: $blue-gray;
+*/
+/* Fonts */
+/* line 38, scss/style.scss */
 html, body {
-    margin: 0px;
-    padding: 0px;
-    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-    font-size: 10pt;
-    background: #797978;
+  margin: 0px;
+  padding: 0px;
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 10pt;
+  background: #797978;
 }
 
+/* line 46, scss/style.scss */
 p {
-    margin: 0px;
-    padding: 0px;
+  margin: 0px;
+  padding: 0px;
 }
 
+/* line 51, scss/style.scss */
 .mainIcon {
-    padding-top: 10px;
-    padding-right: 10px;
-    padding-bottom: 10px;
-    padding-left: 10px;
+  padding-top: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
 }
+
+/* line 57, scss/style.scss */
 #page-container {
-    width: 100%;
-    max-width: 760px;
-    margin: auto;
+  width: 100%;
+  max-width: 760px;
+  margin: auto;
 }
 
+/* line 63, scss/style.scss */
 #header {
-    background: #f2f2f2;
-    height: 50px;
+  background: #f2f2f2;
+  height: 50px;
 }
 
+/* line 68, scss/style.scss */
 #messages {
-    background: #FFFFFF;
-    margin-right: 280px;
-    height:500px;
-    overflow-y: auto;
-    padding: 10px 20px 0px 20px;
-    box-sizing: border-box;
+  background: #ffffff;
+  margin-right: 280px;
+  height: 500px;
+  overflow-y: auto;
+  padding: 10px 20px 0px 20px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
+/* line 77, scss/style.scss */
 #users {
-    float: right;
-    width: 280px;
-    height:500px;
-    overflow-y: auto;
-    background: #FFFFFF;
-    border-left: solid 1px #f2f2f2;
-    padding: 10px 20px 0px 20px;
-    box-sizing: border-box;
+  float: right;
+  width: 280px;
+  height: 500px;
+  overflow-y: auto;
+  background: #ffffff;
+  border-left: solid 1px #f2f2f2;
+  padding: 10px 20px 0px 20px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
+/* line 88, scss/style.scss */
 #users p {
-    padding-left: 20px;
+  padding-left: 20px;
 }
 
+/* line 92, scss/style.scss */
 #chatInput {
-    background: #f2f2f2;
-    clear: both;
-    height: 25px;
-    padding: 3px;
+  background: #f2f2f2;
+  clear: both;
+  height: 25px;
+  padding: 3px;
 }
 
+/* line 99, scss/style.scss */
 input {
-    width: 100%;
-    height: 25px;
-    box-sizing: border-box;
+  width: 100%;
+  height: 25px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
+/* line 105, scss/style.scss */
 ul {
-    list-style-type: none;
+  list-style-type: none;
 }
 
-.channelTree {
-    
-}
-
+/* line 113, scss/style.scss */
 .messageTime {
-    color: #ccc;
+  color: #d9d9d9;
 }
 
+/* line 117, scss/style.scss */
 .messageUserName {
-    color: #27ae60;
-    style: bold;
-}
-
-.messageText {
-
+  color: #27ae60;
+  font-weight: bold;
 }
