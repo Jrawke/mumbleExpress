@@ -66,7 +66,9 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     //set up dynamic tree view callbacks
     $scope.treeOptions = {
 	accept: function(sourceNodeScope, destNodesScope, destIndex) {
-	    if(!destNodesScope.$modelValue || destNodesScope.$modelValue[0].channelId == 0)
+	    if(!destNodesScope.$modelValue ||
+	       (destNodesScope.$modelValue[0] &&
+		destNodesScope.$modelValue[0].channelId == 0))
 		return false;
 	    else
 		return true;
