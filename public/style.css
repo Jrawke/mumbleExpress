@@ -18,7 +18,8 @@ p {
     padding-left: 10px;
 }
 #page-container {
-    width: 760px;
+    width: 100%;
+    max-width: 760px;
     margin: auto;
 }
 
@@ -32,6 +33,8 @@ p {
     margin-right: 280px;
     height:500px;
     overflow-y: auto;
+    padding: 10px 20px 0px 20px;
+    box-sizing: border-box;
 }
 
 #users {
@@ -40,6 +43,9 @@ p {
     height:500px;
     overflow-y: auto;
     background: #FFFFFF;
+    border-left: solid 1px #f2f2f2;
+    padding: 10px 20px 0px 20px;
+    box-sizing: border-box;
 }
 
 #users p {
@@ -50,10 +56,12 @@ p {
     background: #f2f2f2;
     clear: both;
     height: 25px;
+    padding: 3px;
 }
 
 input {
     width: 100%;
+    height: 25px;
     box-sizing: border-box;
 }
 
@@ -66,7 +74,7 @@ ul {
 }
 
 .messageTime {
-    color: #797978;
+    color: #ccc;
 }
 
 .messageUserName {
