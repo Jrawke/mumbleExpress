@@ -120,6 +120,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     d = null;
 
     $scope.channelTree = [];
+    var currentChannel = null;
     
     var loginState = 0;
     var loginInfo = {};
@@ -186,12 +187,17 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	}
 	else {
 	    //else, sending message
-	    socket.emit('send msg', $scope.msg.text);
+	    var recipient = { //who to send message to
+		"isChannel": true, //todo: support sending to user
+		"id": currentChannel
+	    };
+
 	    var textMessage = {
 		"userName": loginInfo.userName,
 		"message": $scope.msg.text,
-		"time": ''+d.getHours()+':'+d.getMinutes()
-	    }
+		"time": ''+d.getHours()+':'+d.getMinutes(),
+	    };
+	    socket.emit('send msg', {"textMessage": textMessage, "recipient": recipient});
 	}
 	$scope.msgs.push(textMessage);
 	$scope.msg.text = '';
@@ -243,6 +249,13 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		//mumble do this by default?
 		parentChannel = 0;
 	    }
+
+	    if(node.name == loginInfo.userName) { //updating the user's position
+		loginInfo.session = node.session;
+		currentChannel = parentChannel;
+	    }
+
+
 	    insertIntoTree(node,parentChannel,$scope.channelTree);
 	    return;
 	}
@@ -253,6 +266,10 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	if(state.channel_id!=null) { //updating user position
 	    deleteFromTree(false, state.session,$scope.channelTree);
 	    insertIntoTree(node,state.channel_id,$scope.channelTree);
+
+	    if(state.session == loginInfo.session) { //updating the user's position
+		currentChannel = state.channel_id;
+	    }
 	}
 
 	if(state.self_deaf==true) //user deafened, must be mute also

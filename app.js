@@ -123,17 +123,28 @@ io.on('connection', function(socket){
     });
 
     socket.on('send msg', function(message) {
-	var recipients = { session: [], channel_id: [] };
+	var textMessage = message.textMessage;
+	var clientRecipient = message.recipient;
+	
+	var serverRecipients = { session: [], channel_id: [] };
 
 	var clients = user.getMumbleConnection().users();
         for( var c in clients ) {
             var client = clients[c];
 
-            recipients.session.push( client.session );
-            recipients.channel_id.push( client.channel.id );
-        }
+	    if(clientRecipient.isChannel) {
+		if(clientRecipient.id == client.channel.id) {
+		    serverRecipients.session.push( client.session );
+		    serverRecipients.channel_id.push( client.channel.id );
+		}
+            }
+	    else if(clientRecipient.id == client.session) {
+		serverRecipients.session.push( client.session );
+		serverRecipients.channel_id.push( client.channel.id );
+	    }
+	}
 
-	user.getMumbleConnection().sendMessage(message, recipients);
+	user.getMumbleConnection().sendMessage(textMessage.message, serverRecipients);
     });
 
     socket.on('disconnect', function() {
