@@ -86,6 +86,9 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	    var srcParent = event.source.nodeScope.$parentNodeScope.$modelValue;
 	    var dstParent = event.dest.nodesScope.$parent.$modelValue;
 
+	    if(srcParent == dstParent)
+		return;
+	    
 	    var channelSwitch = {
 		"isChannel": srcObj.isChannel,
 		"id": srcObj.isChannel? srcObj.channelId : srcObj.session,
