@@ -121,6 +121,44 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
     $scope.channelTree = [];
     var currentChannel = null;
+    var selectedNode = null;
+    var tempSelectedNode = null;
+
+    //on click of item in tree
+    $scope.selectNode = function(node) {
+	var id = node.isChannel? node.channelId : node.session;
+	selectedNode = {
+	    "isChannel": node.isChannel,
+	    "id": id
+	}
+    };
+
+    //on mouseover of item in tree
+    $scope.tempSelectNode = function(node) {
+	var id = node.isChannel? node.channelId : node.session;
+	tempSelectedNode = {
+	    "isChannel": node.isChannel,
+	    "id": id
+	}
+    };
+
+    $scope.tempUnSelectNode = function() {
+	tempSelectedNode = null;
+    };
+    
+    $scope.selectedNode = function(node) {
+	if(selectedNode && (node.isChannel == selectedNode.isChannel)) {
+	    var id = node.isChannel? node.channelId : node.session;
+	    if(id == selectedNode.id)
+		return true;
+	}
+	if(tempSelectedNode && (node.isChannel == tempSelectedNode.isChannel)) {
+	    var id = node.isChannel? node.channelId : node.session;
+	    if(id == tempSelectedNode.id)
+		return true;
+	}
+	return false;
+    };
     
     var loginState = 0;
     var loginInfo = {};

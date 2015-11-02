@@ -18,6 +18,7 @@ $cool-dark-gray: #475562;
 $body-background: $dark-gray;
 $header-color: $light-gray;
 $accent-color: $light-gray;
+$selected-color: $light-gray;
 $content-background: $white;
 
 
@@ -83,6 +84,10 @@ p {
     border-left: solid 1px $accent-color;
     padding: 10px 20px 0px 20px;
     @include box-sizing(border-box);
+}
+
+#selected {
+    background: $selected-color;
 }
 
 #users p {
