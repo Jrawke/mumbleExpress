@@ -1,5 +1,7 @@
 var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket-io','notification', 'ui.tree']);
 
+var defaultUsername = "MumbleExpress";
+
 app.factory('socket', function (socketFactory) {
     return socketFactory();
 });
@@ -46,6 +48,12 @@ function getFromTree(isChannel, id, tree) {
     }
     
     return null;
+}
+
+
+
+function isValidHostname(str) {
+    return /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))|(^\s*((?=.{1,255}$)(?=.*[A-Za-z].*)[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?(?:\.[0-9A-Za-z](?:(?:[0-9A-Za-z]|\b-){0,61}[0-9A-Za-z])?)*)\s*$)/.test(str);
 }
 
 app.controller('mumbleExpressController', function($scope, $notification, socket){
@@ -97,8 +105,8 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     var d = new Date();
     $scope.msgs = [
 	{
-	    "userName": "mumbleExpress",
-	    "message": "Enter server ip",
+	    "userName": defaultUsername,
+	    "message": "Enter server address",
 	    "time": ''+d.getHours()+':'+d.getMinutes()
 	}
     ];
@@ -111,22 +119,32 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     
     $scope.sendMsg = function() {
 	//connect to the server using first few messages as info
+	var d = new Date();
 	if(loginState == 0) { //server ip
-	    loginInfo.ip = $scope.msg.text;
-	    loginState++;
-	    var d = new Date();
-	    var textMessage = {
-		"userName": "mumbleExpress",
-		"message": "Enter port (if blank, will be default of 64738)",
-		"time": ''+d.getHours()+':'+d.getMinutes()
+	    if(isValidHostname($scope.msg.text)) {
+		loginInfo.ip = $scope.msg.text;
+		loginState++;
+		var textMessage = {
+		    "userName": defaultUsername,
+		    "message": "Enter port (if blank, will be default of 64738)",
+		    "time": ''+d.getHours()+':'+d.getMinutes()
+		}
+	    }
+	    else {
+	    	var textMessage = {
+	    	    "userName": defaultUsername,
+	    	    "message": "\"" + $scope.msg.text + "\" is not a valid hostname. Reenter server address",
+	    	    "time": ''+d.getHours()+':'+d.getMinutes()
+	    	};
+		$scope.msgs.push(textMessage);
+		return;
 	    }
 	}
 	else if(loginState == 1) { //port
 	    loginInfo.port = $scope.msg.text == '' ? "64738" : $scope.msg.text;
 	    loginState++;
-	    var d = new Date();
 	    var textMessage = {
-		"userName": "mumbleExpress",
+		"userName": defaultUsername,
 		"message": "Enter user name",
 		"time": ''+d.getHours()+':'+d.getMinutes()
 	    }
@@ -134,9 +152,8 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	else if(loginState == 2) { //username
 	    loginInfo.userName = $scope.msg.text;
 	    loginState++;
-	    var d = new Date();
 	    var textMessage = {
-		"userName": "mumbleExpress",
+		"userName": defaultUsername,
 		"message": "Enter password",
 		"time": ''+d.getHours()+':'+d.getMinutes()
 	    }
@@ -152,7 +169,6 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	else {
 	    //else, sending message
 	    socket.emit('send msg', $scope.msg.text);
-	    var d = new Date();
 	    var textMessage = {
 		"userName": loginInfo.userName,
 		"message": $scope.msg.text,
@@ -166,7 +182,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     socket.on('errorMessage', function(errorMessage) {
 	var d = new Date();
 	var textMessage = {
-	    "userName": "mumbleExpress",
+	    "userName": defaultUsername,
 	    "message": errorMessage,
 	    "time": ''+d.getHours()+':'+d.getMinutes()
 	}
