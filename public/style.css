@@ -177,3 +177,9 @@ ul {
   color: #27ae60;
   font-weight: bold;
 }
+
+/* line 127, scss/style.scss */
+.messageChannelName {
+  color: #e67e22;
+  font-weight: bold;
+}

@@ -34,9 +34,13 @@ function User(socket) {
     };
 
     var onText = function(data) {
+	var channel = data.channel_id[0] != null ? true : false;
+	var tree = data.tree_id[0] != null ? true: false;
 	var textMessage = {
 	    "userName": sessions[data.actor].name,
-	    "message": data.message
+	    "message": data.message,
+	    "channel": channel,
+	    "tree": tree
 	}
 	io.sockets.connected[socket].emit("textMessage",textMessage);
     };

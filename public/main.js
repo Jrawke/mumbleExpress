@@ -124,6 +124,11 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     var selectedNode = null;
     var tempSelectedNode = null;
 
+    $scope.getChannelNameFromId = function (channelId) {
+	node = getFromTree(true,channelId,$scope.channelTree);
+	return node.name;
+    };
+    
     //on click of item in tree
     $scope.selectNode = function(node) {
 	var id = node.isChannel? node.channelId : node.session;
@@ -173,14 +178,16 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		var textMessage = {
 		    "userName": defaultUsername,
 		    "message": "Enter port (if blank, will be default of 64738)",
-		    "time": ''+d.getHours()+':'+d.getMinutes()
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 		}
 	    }
 	    else {
 	    	var textMessage = {
 	    	    "userName": defaultUsername,
 	    	    "message": "\"" + $scope.msg.text + "\" is not a valid hostname. Reenter server address",
-	    	    "time": ''+d.getHours()+':'+d.getMinutes()
+	    	    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 	    	};
 		$scope.msgs.push(textMessage);
 		return;
@@ -192,7 +199,8 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	    var textMessage = {
 		"userName": defaultUsername,
 		"message": "Enter user name",
-		"time": ''+d.getHours()+':'+d.getMinutes()
+		"time": ''+d.getHours()+':'+d.getMinutes(),
+		"recipient": null
 	    }
 	}
 	else if(loginState == 2) { //username
@@ -202,14 +210,16 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		var textMessage = {
 		    "userName": defaultUsername,
 		    "message": "Enter password",
-		    "time": ''+d.getHours()+':'+d.getMinutes()
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 		}
 	    }
 	    else {
 		var textMessage = {
 		    "userName": defaultUsername,
 	    	    "message": "\"" + $scope.msg.text + "\" is not a valid username. Reenter server address",
-		    "time": ''+d.getHours()+':'+d.getMinutes()
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 		}
 		$scope.msgs.push(textMessage);
 		return;
@@ -234,6 +244,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		"userName": loginInfo.userName,
 		"message": $scope.msg.text,
 		"time": ''+d.getHours()+':'+d.getMinutes(),
+		"recipient": recipient
 	    };
 	    socket.emit('send msg', {"textMessage": textMessage, "recipient": recipient});
 	}
@@ -252,10 +263,12 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     });
     
     socket.on('textMessage', function(textMessage) {
+	console.log(textMessage);
 	//append local time to textMessage object as string
 	//(collected on client so locality is not an issue)
 	var d = new Date();
 	textMessage["time"]=''+d.getHours()+':'+d.getMinutes();
+	textMessage["recipient"]=null; //incoming message
 
 	//receive remote message
 	$scope.msgs.push(textMessage);
@@ -307,6 +320,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
 	    if(state.session == loginInfo.session) { //updating the user's position
 		currentChannel = state.channel_id;
+		selectNode(node); //when user moves, select new channel by default
 	    }
 	}
 

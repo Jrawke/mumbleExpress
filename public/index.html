@@ -50,7 +50,7 @@
 	      </li>
 	    </ol>
 	  </script>
-	  <div ng-if="channelTree.length" ui-tree="treeOptions" data-drag-delay="100">
+	  <div ng-if="channelTree.length" ui-tree="treeOptions" data-drag-delay="50">
 	    <ol ui-tree-nodes="" ng-model="channelTree" id="tree-root">
 	      <li ng-repeat="node in channelTree" ui-tree-node ng-include="'nodes_renderer.html'"></li>
 	    </ol>
@@ -60,7 +60,15 @@
 	<div id="messages" scroll-glue>
 	  <p ng-repeat="msg in msgs track by $index">
 	    <span class="messageTime">[ {{msg.time}} ] </span>
-	    <span class="messageUserName">{{msg.userName}}</span>
+	    <span ng-if="msg.recipient && msg.recipient.isChannel">
+	      To <span class="messageChannelName">{{getChannelNameFromId(msg.recipient.id)}}</span>
+	    </span>
+	    <span ng-if="msg.recipient && !msg.recipient.isChannel">
+	      To <span class="messageChannelName">{{getChannelNameFromId(msg.recipient.id)}}</span>
+	    </span>
+	    <span ng-if="msg.channel" class="messageChannelText">(Channel)</span>
+	    <span ng-if="msg.tree" class="messageTreeText">(Channel)</span>
+	    <span ng-if="!msg.recipient" class="messageUserName">{{msg.userName}}</span>
 	    <span class="messageText">: {{msg.message}}</span>
 	  </p>
 	</div>
