@@ -73,7 +73,7 @@ $accent-color: $cool-dark-gray;
 $content-background: $blue-gray;
 */
 /* Fonts */
-/* line 39, scss/style.scss */
+/* line 37, scss/style.scss */
 html, body {
   margin: 0px;
   padding: 0px;
@@ -82,13 +82,13 @@ html, body {
   background: #797978;
 }
 
-/* line 47, scss/style.scss */
+/* line 45, scss/style.scss */
 p {
   margin: 0px;
   padding: 0px;
 }
 
-/* line 52, scss/style.scss */
+/* line 50, scss/style.scss */
 .mainIcon {
   padding-top: 10px;
   padding-right: 10px;
@@ -96,20 +96,20 @@ p {
   padding-left: 10px;
 }
 
-/* line 58, scss/style.scss */
+/* line 56, scss/style.scss */
 #page-container {
   width: 100%;
   max-width: 760px;
   margin: auto;
 }
 
-/* line 64, scss/style.scss */
+/* line 62, scss/style.scss */
 #header {
   background: #f2f2f2;
   height: 50px;
 }
 
-/* line 69, scss/style.scss */
+/* line 67, scss/style.scss */
 #messages {
   background: #ffffff;
   margin-right: 280px;
@@ -121,7 +121,7 @@ p {
   box-sizing: border-box;
 }
 
-/* line 78, scss/style.scss */
+/* line 76, scss/style.scss */
 #users {
   float: right;
   width: 280px;
@@ -135,17 +135,17 @@ p {
   box-sizing: border-box;
 }
 
-/* line 89, scss/style.scss */
+/* line 87, scss/style.scss */
 #selected {
   background: #f2f2f2;
 }
 
-/* line 93, scss/style.scss */
+/* line 91, scss/style.scss */
 #users p {
   padding-left: 20px;
 }
 
-/* line 97, scss/style.scss */
+/* line 95, scss/style.scss */
 #chatInput {
   background: #f2f2f2;
   clear: both;
@@ -153,7 +153,7 @@ p {
   padding: 3px;
 }
 
-/* line 104, scss/style.scss */
+/* line 102, scss/style.scss */
 input {
   width: 100%;
   height: 25px;
@@ -162,24 +162,143 @@ input {
   box-sizing: border-box;
 }
 
-/* line 110, scss/style.scss */
+/* line 108, scss/style.scss */
 ul {
   list-style-type: none;
 }
 
-/* line 118, scss/style.scss */
+/* line 116, scss/style.scss */
 .messageTime {
   color: #d9d9d9;
 }
 
-/* line 122, scss/style.scss */
+/* line 120, scss/style.scss */
 .messageUserName {
   color: #27ae60;
   font-weight: bold;
 }
 
-/* line 127, scss/style.scss */
+/* line 125, scss/style.scss */
 .messageChannelName {
   color: #e67e22;
   font-weight: bold;
+}
+
+/* line 152, scss/style.scss */
+input[type="checkbox"] {
+  display: none;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="config_network"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/config_network.png") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="config_network"] {
+  background: url("scss/assets/icons/config_network.png") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="information_icon"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/Information_icon.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="information_icon"] {
+  background: url("scss/assets/icons/Information_icon.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="muted_self"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/muted_self.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="muted_self"] {
+  background: url("scss/assets/icons/audio-input-microphone.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="deafened_self"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/deafened_self.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="deafened_self"] {
+  background: url("scss/assets/icons/self_undeafened.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="comment"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/comment.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="comment"] {
+  background: url("scss/assets/icons/comment.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="config_basic"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/config_basic.png") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="config_basic"] {
+  background: url("scss/assets/icons/config_basic.png") no-repeat;
+  background-size: 100%;
 }

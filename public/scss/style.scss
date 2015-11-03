@@ -21,8 +21,6 @@ $accent-color: $light-gray;
 $selected-color: $light-gray;
 $content-background: $white;
 
-
-
 /* Colors - For Dark Theme */
 /*
 $body-background: $cool-gray;
@@ -131,4 +129,54 @@ ul {
 
 .messageText {
 
+}
+
+//
+// icons
+//
+
+//path to icons
+$iconPath: "scss/assets/icons/";
+
+//mapping from icon id to unselected/selected icons
+$iconFiles: (
+    config_network: ("config_network.png","config_network.png"),
+    information_icon: ("Information_icon.svg","Information_icon.svg"),
+    muted_self: ("muted_self.svg","audio-input-microphone.svg"),
+    deafened_self: ("deafened_self.svg", "self_undeafened.svg"),
+    comment: ("comment.svg","comment.svg"),
+    config_basic: ("config_basic.png","config_basic.png")
+);
+
+$iconMargin: 10px;
+$iconSize: 30px;
+
+input[type="checkbox"] {
+    display:none;
+}
+
+@mixin icon($id, $unselected, $selected) {
+    input[type="checkbox"] + label[for="#{$id}"] {
+	width: $iconSize;
+	height: $iconSize;
+
+	margin-top: $iconMargin;
+	margin-right: $iconMargin;
+	margin-bottom: $iconMargin;
+	margin-left: $iconMargin;
+
+	display: inline-block;
+
+	background: url($iconPath+$unselected) no-repeat;
+	background-size: 100%;
+    }
+
+    input[type="checkbox"]:checked + label[for="#{$id}"] {
+	background: url($iconPath+$selected) no-repeat;
+	background-size: 100%;
+    }
+}
+
+@each $id, $iconPair in $iconFiles {
+    @include icon($id, nth($iconPair,1),nth($iconPair,2));
 }

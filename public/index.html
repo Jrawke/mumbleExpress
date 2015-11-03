@@ -18,12 +18,18 @@
 
     <div id="page-container">
       <div id="header">
-	  <img src="icons/config_network.png" height="30" width="30" class="mainIcon">
-	  <img src="icons/Information_icon.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/muted_self.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/deafened_self.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/comment.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/config_basic.png" height="30" width="30" class="mainIcon">
+	<input type="checkbox" class="icon" id="config_network"/>
+	<label for="config_network"></label>
+	<input type="checkbox" class="icon" id="information_icon"/>
+	<label for="information_icon"></label>
+	<input type="checkbox" class="icon" id="muted_self"/>
+	<label for="muted_self"></label>
+	<input type="checkbox" class="icon" id="deafened_self"/>
+	<label for="deafened_self"></label>
+	<input type="checkbox" class="icon" id="comment"/>
+	<label for="comment"></label>
+	<input type="checkbox" class="icon" id="config_basic"/>
+	<label for="config_basic"></label>
       </div>
       <div ng-controller="mumbleExpressController">
 	<div id="users">
