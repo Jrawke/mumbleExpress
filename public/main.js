@@ -351,7 +351,12 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	}
 	console.log("voice");
     });
-   
+
+    var initialized = false;
+    socket.on('ready', function() {
+	initialized = true;
+    });
+    
     socket.on('userState', function(state) {
 	if(state.name) { // a new user connected
 
@@ -368,6 +373,17 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
 		"children": []
 	    };
+	    if(initialized) {
+		//log the connection to chatbox
+		var d = new Date();
+		var textMessage = {
+		    "userName": node.name,
+	    	    "message": "connected",
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
+		}
+		$scope.msgs.push(textMessage);
+	    }
 
 	    var parentChannel = state.channel_id;
 	    if(parentChannel == null) {
@@ -396,7 +412,19 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 
 	    if(state.session == loginInfo.session) { //updating the user's position
 		currentChannel = state.channel_id;
-		selectNode(node); //when user moves, select new channel by default
+		$scope.selectNode(node); //when user moves, select new channel by default
+	    }
+	    else {
+		//log the move to chatbox
+		var newChannel = getFromTree(true, state.channel_id,$scope.channelTree);
+		var d = new Date();
+		var textMessage = {
+		    "userName": node.name,
+	    	    "message": "moved to "+newChannel.name,
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
+		}
+		$scope.msgs.push(textMessage);
 	    }
 	}
 
@@ -420,6 +448,28 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		$scope.user.muted = state.self_mute;
 	    }
 	}
+
+	if(state.self_mute != null || state.self_deaf != null) {
+	    //log the mute/deaf to chatbox
+	    var muteDeafMessage = '';
+	    if(state.self_deaf == true)
+		muteDeafMessage = "muted and deafened";
+	    else if(state.self_deaf == false)
+		muteDeafMessage = node.muted? "undeafened" : "unmuted and undeafened";
+	    else if(state.self_mute == true)
+		muteDeafMessage = "muted";
+	    else if(state.self_mute == false)
+		muteDeafMessage = "unmuted";
+	    var d = new Date();
+	    var textMessage = {
+		"userName": node.name,
+		"message": muteDeafMessage,
+		"time": ''+d.getHours()+':'+d.getMinutes(),
+		"recipient": null
+	    };
+	    $scope.msgs.push(textMessage);
+	}
+
     });
 
     socket.on('channelState', function(state) {
@@ -443,6 +493,17 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     });
 
     socket.on('userRemove', function(state) {
+	node = getFromTree(false,state.session,$scope.channelTree);
+	//log the disconnection to chatbox
+	var d = new Date();
+	var textMessage = {
+	    "userName": node.name,
+	    "message": "disconnected",
+	    "time": ''+d.getHours()+':'+d.getMinutes(),
+	    "recipient": null
+	}
+	$scope.msgs.push(textMessage);
+
 	deleteFromTree(false, state.session,$scope.channelTree);
     });
 

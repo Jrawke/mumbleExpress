@@ -57,15 +57,15 @@ function User(socket) {
 
     var onChannelState = function(state) {
 	io.sockets.connected[socket].emit("channelState",state);
-    }
+    };
 
     var onChannelRemove = function (state) {
 	io.sockets.connected[socket].emit("channelRemove",state);
-    }
+    };
 
     var onError = function (err) {
 	io.sockets.connected[socket].emit("errorMessage",err.message);
-    }
+    };
 
     this.getMumbleConnection = function() {
 	return mumbleClient;
@@ -96,6 +96,7 @@ function User(socket) {
 			client.user.setSelfDeaf(deaf);
 		    else if(mute)
 			client.user.setSelfMute(mute);
+		    io.sockets.connected[socket].emit("ready");
 		});
 	    }
 	    catch(e) {
@@ -108,7 +109,6 @@ function User(socket) {
     this.disconnect = function() {
 	if(mumbleClient) {
 	    mumbleClient.disconnect();
-	    console.log('disconnected');
 	}
     }
 }
