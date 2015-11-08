@@ -142,8 +142,8 @@ $iconPath: "scss/assets/icons/";
 $iconFiles: (
     config_network: ("config_network.png","config_network.png"),
     information_icon: ("Information_icon.svg","Information_icon.svg"),
-    muted_self: ("muted_self.svg","audio-input-microphone.svg"),
-    deafened_self: ("deafened_self.svg", "self_undeafened.svg"),
+    muted_self: ("audio-input-microphone.svg","muted_self.svg"),
+    deafened_self: ("self_undeafened.svg","deafened_self.svg"),
     comment: ("comment.svg","comment.svg"),
     config_basic: ("config_basic.png","config_basic.png")
 );

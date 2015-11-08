@@ -157,6 +157,11 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     ];
     d = null;
 
+    //set up buttons
+    $scope.user = {};
+    $scope.user.muted = true;
+    $scope.user.deafened = false;
+
     $scope.channelTree = [];
     var currentChannel = null;
     var selectedNode = null;
@@ -273,6 +278,8 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	}
 	else if(loginState == 3) { //password
 	    loginInfo.password = $scope.msg.text;
+	    loginInfo.muted = $scope.user.muted;
+	    loginInfo.deafened = $scope.user.deafened;
 	    loginState++;
 	    //transmit info to server
 	    socket.emit('login', loginInfo);

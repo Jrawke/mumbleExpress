@@ -25,7 +25,6 @@ function User(socket) {
     var sessions = {}
 
     var onInit = function() {
-	console.log( 'Connection initialized' );
 	// Connection is authenticated and usable.
     };
 
@@ -72,7 +71,7 @@ function User(socket) {
 	return mumbleClient;
     };
 
-    this.doConnect = function(serverAddress, username, password, key, cert) {
+    this.doConnect = function(serverAddress, username, password, mute, deaf, key, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
 	mumble.connect( serverAddress, MUMBLE_OPTIONS, function ( error, client ) {
 	    try {
@@ -82,9 +81,8 @@ function User(socket) {
 		    throw new Error( error );
 		}
 
-		console.log( 'Connected' );
-
 		client.authenticate( username );
+
 		client.on('initialized', onInit );
 		client.on('voice', onVoice );
 		client.on('textMessage', onText );
@@ -94,8 +92,10 @@ function User(socket) {
 		client.on('channelRemove', onChannelRemove);
 		client.on('error', onError);
 		client.on('ready', function() {
-		    console.log("client ready");
-		    // console.log(client.users());
+		    if(deaf)
+			client.user.setSelfDeaf(deaf);
+		    else if(mute)
+			client.user.setSelfMute(mute);
 		});
 	    }
 	    catch(e) {
@@ -123,7 +123,7 @@ io.on('connection', function(socket){
 	}
 	var password = loginInfo.password == '' ? null : loginInfo.password;
 	var serverAddress = 'mumble://'+loginInfo.ip+':'+loginInfo.port;
-	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password);
+	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password, loginInfo.muted, loginInfo.deafened);
     });
 
     socket.on('send msg', function(message) {
