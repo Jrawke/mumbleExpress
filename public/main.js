@@ -161,6 +161,27 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     $scope.user = {};
     $scope.user.muted = true;
     $scope.user.deafened = false;
+    var muteState =  true;
+
+    $scope.deafButton = function() {
+	if(!$scope.user.deafened)
+	    $scope.user.muted = muteState;
+	
+	socket.emit('deafButton',
+		    {
+			selfMute: $scope.user.muted,
+			selfDeaf: $scope.user.deafened
+		    }
+		   );
+    };
+    
+    $scope.muteButton = function() {
+	muteState = $scope.user.muted;
+	if(!$scope.user.muted)
+	    $scope.user.deafened = false;
+
+	socket.emit('muteButton', $scope.user.muted);
+    };
 
     $scope.channelTree = [];
     var currentChannel = null;
@@ -208,14 +229,6 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	return false;
     };
 
-    $scope.muteButton = function() {
-	socket.emit('muteButton', $scope.user.muted);
-    };
-
-    $scope.deafButton = function() {
-	socket.emit('deafButton', $scope.user.deafened);
-    };
-    
     var loginState = 0;
     var loginInfo = {};
     

@@ -170,18 +170,23 @@ io.on('connection', function(socket){
 	}
     });
 
-    socket.on('muteButton', function(muted) {
-	if(user.getMumbleConnection() && user.getMumbleConnection().user)
-	    user.getMumbleConnection().user.setSelfMute(muted);
+    socket.on('muteButton', function(isMuted) {
+	if(!user.getMumbleConnection() || !user.getMumbleConnection().user)
+	    return
+	user.getMumbleConnection().user.setSelfMute(isMuted);
     });
 
-    socket.on('deafButton', function(muted) {
-	if(user.getMumbleConnection() && user.getMumbleConnection().user)
-	    user.getMumbleConnection().user.setSelfDeaf(muted);
+    socket.on('deafButton', function(isSelfMuteAndDeaf) {
+	if(!user.getMumbleConnection() || !user.getMumbleConnection().user)
+	    return
+	else if(!isSelfMuteAndDeaf.selfMute && !isSelfMuteAndDeaf.selfDeaf)
+	    user.getMumbleConnection().user.setSelfMute(false);
+	else
+	    user.getMumbleConnection().user.setSelfDeaf(isSelfMuteAndDeaf.selfDeaf);
     });
 
 });
-
+    
 function ensureSecure(req, res, next){
     if(req.secure){
 	// OK, continue
