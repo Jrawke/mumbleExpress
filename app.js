@@ -34,9 +34,13 @@ function User(socket) {
     };
 
     var onText = function(data) {
+	var channel = data.channel_id[0] != null ? true : false;
+	var tree = data.tree_id[0] != null ? true: false;
 	var textMessage = {
 	    "userName": sessions[data.actor].name,
-	    "message": data.message
+	    "message": data.message,
+	    "channel": channel,
+	    "tree": tree
 	}
 	io.sockets.connected[socket].emit("textMessage",textMessage);
     };
@@ -123,17 +127,33 @@ io.on('connection', function(socket){
     });
 
     socket.on('send msg', function(message) {
-	var recipients = { session: [], channel_id: [] };
+	if(!user.getMumbleConnection() || !user.getMumbleConnection().users())
+	    return;
+	var textMessage = message.message;
+	var clientRecipient = message.recipient;
+
+	if(textMessage == '')
+	    return;
+	
+	var serverRecipients = { session: [], channel_id: [] };
 
 	var clients = user.getMumbleConnection().users();
         for( var c in clients ) {
             var client = clients[c];
 
-            recipients.session.push( client.session );
-            recipients.channel_id.push( client.channel.id );
-        }
+	    if(clientRecipient.isChannel) {
+		if(clientRecipient.id == client.channel.id) {
+		    serverRecipients.session.push( client.session );
+		    serverRecipients.channel_id.push( client.channel.id );
+		}
+            }
+	    else if(clientRecipient.id == client.session) {
+		serverRecipients.session.push( client.session );
+		serverRecipients.channel_id.push( client.channel.id );
+	    }
+	}
 
-	user.getMumbleConnection().sendMessage(message, recipients);
+	user.getMumbleConnection().sendMessage(textMessage, serverRecipients);
     });
 
     socket.on('disconnect', function() {
@@ -148,6 +168,16 @@ io.on('connection', function(socket){
 	    var movingUser = user.getMumbleConnection().userBySession(channelSwitch.id);
 	    movingUser.moveToChannel(channelSwitch.channelName);
 	}
+    });
+
+    socket.on('muteButton', function(muted) {
+	if(user.getMumbleConnection() && user.getMumbleConnection().user)
+	    user.getMumbleConnection().user.setSelfMute(muted);
+    });
+
+    socket.on('deafButton', function(muted) {
+	if(user.getMumbleConnection() && user.getMumbleConnection().user)
+	    user.getMumbleConnection().user.setSelfDeaf(muted);
     });
 
 });

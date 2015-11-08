@@ -1,4 +1,4 @@
-/* line 5, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,45 +20,45 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
-/* line 22, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1;
 }
 
-/* line 24, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none;
 }
 
-/* line 26, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* line 28, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle;
 }
 
-/* line 30, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none;
 }
-/* line 103, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 103, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q:before, q:after, blockquote:before, blockquote:after {
   content: "";
   content: none;
 }
 
-/* line 32, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none;
 }
 
-/* line 116, ../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../var/lib/gems/2.1.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block;
 }
@@ -73,7 +73,7 @@ $accent-color: $cool-dark-gray;
 $content-background: $blue-gray;
 */
 /* Fonts */
-/* line 38, scss/style.scss */
+/* line 37, scss/style.scss */
 html, body {
   margin: 0px;
   padding: 0px;
@@ -82,13 +82,13 @@ html, body {
   background: #797978;
 }
 
-/* line 46, scss/style.scss */
+/* line 45, scss/style.scss */
 p {
   margin: 0px;
   padding: 0px;
 }
 
-/* line 51, scss/style.scss */
+/* line 50, scss/style.scss */
 .mainIcon {
   padding-top: 10px;
   padding-right: 10px;
@@ -96,20 +96,20 @@ p {
   padding-left: 10px;
 }
 
-/* line 57, scss/style.scss */
+/* line 56, scss/style.scss */
 #page-container {
   width: 100%;
   max-width: 760px;
   margin: auto;
 }
 
-/* line 63, scss/style.scss */
+/* line 62, scss/style.scss */
 #header {
   background: #f2f2f2;
   height: 50px;
 }
 
-/* line 68, scss/style.scss */
+/* line 67, scss/style.scss */
 #messages {
   background: #ffffff;
   margin-right: 280px;
@@ -121,7 +121,7 @@ p {
   box-sizing: border-box;
 }
 
-/* line 77, scss/style.scss */
+/* line 76, scss/style.scss */
 #users {
   float: right;
   width: 280px;
@@ -135,12 +135,17 @@ p {
   box-sizing: border-box;
 }
 
-/* line 88, scss/style.scss */
+/* line 87, scss/style.scss */
+#selected {
+  background: #f2f2f2;
+}
+
+/* line 91, scss/style.scss */
 #users p {
   padding-left: 20px;
 }
 
-/* line 92, scss/style.scss */
+/* line 95, scss/style.scss */
 #chatInput {
   background: #f2f2f2;
   clear: both;
@@ -148,7 +153,7 @@ p {
   padding: 3px;
 }
 
-/* line 99, scss/style.scss */
+/* line 102, scss/style.scss */
 input {
   width: 100%;
   height: 25px;
@@ -157,18 +162,143 @@ input {
   box-sizing: border-box;
 }
 
-/* line 105, scss/style.scss */
+/* line 108, scss/style.scss */
 ul {
   list-style-type: none;
 }
 
-/* line 113, scss/style.scss */
+/* line 116, scss/style.scss */
 .messageTime {
   color: #d9d9d9;
 }
 
-/* line 117, scss/style.scss */
+/* line 120, scss/style.scss */
 .messageUserName {
   color: #27ae60;
   font-weight: bold;
+}
+
+/* line 125, scss/style.scss */
+.messageChannelName {
+  color: #e67e22;
+  font-weight: bold;
+}
+
+/* line 152, scss/style.scss */
+input[type="checkbox"] {
+  display: none;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="config_network"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/config_network.png") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="config_network"] {
+  background: url("scss/assets/icons/config_network.png") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="information_icon"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/Information_icon.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="information_icon"] {
+  background: url("scss/assets/icons/Information_icon.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="muted_self"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/muted_self.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="muted_self"] {
+  background: url("scss/assets/icons/audio-input-microphone.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="deafened_self"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/deafened_self.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="deafened_self"] {
+  background: url("scss/assets/icons/self_undeafened.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="comment"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/comment.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="comment"] {
+  background: url("scss/assets/icons/comment.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 157, scss/style.scss */
+input[type="checkbox"] + label[for="config_basic"] {
+  width: 30px;
+  height: 30px;
+  margin-top: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-block;
+  background: url("scss/assets/icons/config_basic.png") no-repeat;
+  background-size: 100%;
+}
+
+/* line 172, scss/style.scss */
+input[type="checkbox"]:checked + label[for="config_basic"] {
+  background: url("scss/assets/icons/config_basic.png") no-repeat;
+  background-size: 100%;
 }

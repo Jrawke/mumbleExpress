@@ -158,6 +158,58 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     d = null;
 
     $scope.channelTree = [];
+    var currentChannel = null;
+    var selectedNode = null;
+    var tempSelectedNode = null;
+
+    $scope.getChannelNameFromId = function (channelId) {
+	node = getFromTree(true,channelId,$scope.channelTree);
+	return node.name;
+    };
+    
+    //on click of item in tree
+    $scope.selectNode = function(node) {
+	var id = node.isChannel? node.channelId : node.session;
+	selectedNode = {
+	    "isChannel": node.isChannel,
+	    "id": id
+	}
+    };
+
+    //on mouseover of item in tree
+    $scope.tempSelectNode = function(node) {
+	var id = node.isChannel? node.channelId : node.session;
+	tempSelectedNode = {
+	    "isChannel": node.isChannel,
+	    "id": id
+	}
+    };
+
+    $scope.tempUnSelectNode = function() {
+	tempSelectedNode = null;
+    };
+    
+    $scope.selectedNode = function(node) {
+	if(selectedNode && (node.isChannel == selectedNode.isChannel)) {
+	    var id = node.isChannel? node.channelId : node.session;
+	    if(id == selectedNode.id)
+		return true;
+	}
+	if(tempSelectedNode && (node.isChannel == tempSelectedNode.isChannel)) {
+	    var id = node.isChannel? node.channelId : node.session;
+	    if(id == tempSelectedNode.id)
+		return true;
+	}
+	return false;
+    };
+
+    $scope.muteButton = function() {
+	socket.emit('muteButton', $scope.user.muted);
+    };
+
+    $scope.deafButton = function() {
+	socket.emit('deafButton', $scope.user.deafened);
+    };
     
     var loginState = 0;
     var loginInfo = {};
@@ -172,14 +224,16 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		var textMessage = {
 		    "userName": defaultUsername,
 		    "message": "Enter port (if blank, will be default of 64738)",
-		    "time": ''+d.getHours()+':'+d.getMinutes()
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 		}
 	    }
 	    else {
 	    	var textMessage = {
 	    	    "userName": defaultUsername,
 	    	    "message": "\"" + $scope.msg.text + "\" is not a valid hostname. Reenter server address",
-	    	    "time": ''+d.getHours()+':'+d.getMinutes()
+	    	    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 	    	};
 		$scope.msgs.push(textMessage);
 		return;
@@ -191,7 +245,8 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	    var textMessage = {
 		"userName": defaultUsername,
 		"message": "Enter user name",
-		"time": ''+d.getHours()+':'+d.getMinutes()
+		"time": ''+d.getHours()+':'+d.getMinutes(),
+		"recipient": null
 	    }
 	}
 	else if(loginState == 2) { //username
@@ -201,14 +256,16 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		var textMessage = {
 		    "userName": defaultUsername,
 		    "message": "Enter password",
-		    "time": ''+d.getHours()+':'+d.getMinutes()
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 		}
 	    }
 	    else {
 		var textMessage = {
 		    "userName": defaultUsername,
 	    	    "message": "\"" + $scope.msg.text + "\" is not a valid username. Reenter server address",
-		    "time": ''+d.getHours()+':'+d.getMinutes()
+		    "time": ''+d.getHours()+':'+d.getMinutes(),
+		    "recipient": null
 		}
 		$scope.msgs.push(textMessage);
 		return;
@@ -224,12 +281,22 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	}
 	else {
 	    //else, sending message
-	    socket.emit('send msg', $scope.msg.text);
+
+	    if($scope.msg.text=='')
+		return;
+	    
+	    var recipient = { //who to send message to
+		"isChannel": true, //todo: support sending to user
+		"id": currentChannel
+	    };
+
 	    var textMessage = {
 		"userName": loginInfo.userName,
 		"message": $scope.msg.text,
-		"time": ''+d.getHours()+':'+d.getMinutes()
-	    }
+		"time": ''+d.getHours()+':'+d.getMinutes(),
+		"recipient": recipient
+	    };
+	    socket.emit('send msg', textMessage);
 	}
 	$scope.msgs.push(textMessage);
 	$scope.msg.text = '';
@@ -250,6 +317,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	//(collected on client so locality is not an issue)
 	var d = new Date();
 	textMessage["time"]=''+d.getHours()+':'+d.getMinutes();
+	textMessage["recipient"]=null; //incoming message
 
 	//receive remote message
 	$scope.msgs.push(textMessage);
@@ -288,6 +356,13 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		//mumble do this by default?
 		parentChannel = 0;
 	    }
+
+	    if(node.name == loginInfo.userName) { //updating the user's position
+		loginInfo.session = node.session;
+		currentChannel = parentChannel;
+	    }
+
+
 	    insertIntoTree(node,parentChannel,$scope.channelTree);
 	    return;
 	}
@@ -298,16 +373,33 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	if(state.channel_id!=null) { //updating user position
 	    deleteFromTree(false, state.session,$scope.channelTree);
 	    insertIntoTree(node,state.channel_id,$scope.channelTree);
+
+	    if(state.session == loginInfo.session) { //updating the user's position
+		currentChannel = state.channel_id;
+		selectNode(node); //when user moves, select new channel by default
+	    }
 	}
 
-	if(state.self_deaf==true) //user deafened, must be mute also
+	if(state.self_deaf==true) { //user deafened, must be mute also
 	    node.deafened = state.self_mute = true;
+	    if(node.name == loginInfo.userName) {
+		$scope.user.muted = $scope.user.deafened = true;
+	    }
+	}
 
-	if(state.self_deaf==false) //user undeafened
+	if(state.self_deaf==false) { //user undeafened
 	    node.deafened = false;
+	    if(node.name == loginInfo.userName) {
+		$scope.user.deafened = false;
+	    }
+	}
 
-	if(state.self_mute!=null) //updating user mute
+	if(state.self_mute!=null) { //updating user mute
 	    node.muted=state.self_mute;
+	    if(node.name == loginInfo.userName) {
+		$scope.user.muted = state.self_mute;
+	    }
+	}
     });
 
     socket.on('channelState', function(state) {

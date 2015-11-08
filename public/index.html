@@ -17,30 +17,46 @@
   <body>
 
     <div id="page-container">
-      <div id="header">
-	  <img src="icons/config_network.png" height="30" width="30" class="mainIcon">
-	  <img src="icons/Information_icon.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/muted_self.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/deafened_self.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/comment.svg" height="30" width="30" class="mainIcon">
-	  <img src="icons/config_basic.png" height="30" width="30" class="mainIcon">
-      </div>
       <div ng-controller="mumbleExpressController">
+	<div id="header">
+	  <input type="checkbox" class="icon" id="config_network"/>
+	  <label for="config_network"></label>
+	  <input type="checkbox" class="icon" id="information_icon"/>
+	  <label for="information_icon"></label>
+	  <input type="checkbox" class="icon" ng-model="user.muted" ng-change="muteButton()" id="muted_self"/>
+	  <label for="muted_self"></label>
+	  <input type="checkbox" class="icon" ng-model="user.deafened" ng-change="deafButton()" id="deafened_self"/>
+	  <label for="deafened_self"></label>
+	  <input type="checkbox" class="icon" id="comment"/>
+	  <label for="comment"></label>
+	  <input type="checkbox" class="icon" id="config_basic"/>
+	  <label for="config_basic"></label>
+	</div>
 	<div id="users">
 	  
 	  <script type="text/ng-template" id="nodes_renderer.html">
-	    <div ui-tree-handle>
-	      <img ng-if="!node.isChannel" src="icons/talking_off.svg" height="20" width="20">
+	    <!-- selected node -->
+	    <div ui-tree-handle ng-click="selectNode(node)" ng-mouseover="tempSelectNode(node)" ng-mouseleave="tempUnSelectNode()" ng-if="selectedNode(node)" id="selected">
+	      <img ng-if="!node.isChannel" src="scss/assets/icons/talking_off.svg" height="20" width="20"> <!-- todo, define image location in CSS -->
 	      {{node.name}}
-	      <img ng-if="node.muted" src="icons/muted_self.svg" height="20" width="20">
-	      <img ng-if="node.deafened" src="icons/deafened_self.svg" height="20" width="20">
+	      <img ng-if="node.muted" src="scss/assets/icons/muted_self.svg" height="20" width="20">
+	      <img ng-if="node.deafened" src="scss/assets/icons/deafened_self.svg" height="20" width="20">
 	    </div>
+
+	    <!-- else, unselected node -->
+	    <div ui-tree-handle ng-click="selectNode(node)" ng-mouseover="tempSelectNode(node)" ng-mouseleave="tempUnSelectNode()" ng-if="!selectedNode(node)">
+	      <img ng-if="!node.isChannel" src="scss/assets/icons/talking_off.svg" height="20" width="20">
+	      {{node.name}}
+	      <img ng-if="node.muted" src="scss/assets/icons/muted_self.svg" height="20" width="20">
+	      <img ng-if="node.deafened" src="scss/assets/icons/deafened_self.svg" height="20" width="20">
+	    </div>
+	    
 	    <ol ui-tree-nodes="" ng-model="node.children">
 	      <li ng-repeat="node in node.children" ui-tree-node ng-include="'nodes_renderer.html'">
 	      </li>
 	    </ol>
 	  </script>
-	  <div ng-if="channelTree.length" ui-tree="treeOptions">
+	  <div ng-if="channelTree.length" ui-tree="treeOptions" data-drag-delay="50">
 	    <ol ui-tree-nodes="" ng-model="channelTree" id="tree-root">
 	      <li ng-repeat="node in channelTree" ui-tree-node ng-include="'nodes_renderer.html'"></li>
 	    </ol>
@@ -50,7 +66,15 @@
 	<div id="messages" scroll-glue>
 	  <p ng-repeat="msg in msgs track by $index">
 	    <span class="messageTime">[ {{msg.time}} ] </span>
-	    <span class="messageUserName">{{msg.userName}}</span>
+	    <span ng-if="msg.recipient && msg.recipient.isChannel">
+	      To <span class="messageChannelName">{{getChannelNameFromId(msg.recipient.id)}}</span>
+	    </span>
+	    <span ng-if="msg.recipient && !msg.recipient.isChannel">
+	      To <span class="messageChannelName">{{getChannelNameFromId(msg.recipient.id)}}</span>
+	    </span>
+	    <span ng-if="msg.channel" class="messageChannelText">(Channel)</span>
+	    <span ng-if="msg.tree" class="messageTreeText">(Channel)</span>
+	    <span ng-if="!msg.recipient" class="messageUserName">{{msg.userName}}</span>
 	    <span class="messageText">: {{msg.message}}</span>
 	  </p>
 	</div>
