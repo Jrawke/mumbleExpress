@@ -127,8 +127,13 @@ io.on('connection', function(socket){
     });
 
     socket.on('send msg', function(message) {
-	var textMessage = message.textMessage;
+	if(!user.getMumbleConnection() || !user.getMumbleConnection().users())
+	    return;
+	var textMessage = message.message;
 	var clientRecipient = message.recipient;
+
+	if(textMessage == '')
+	    return;
 	
 	var serverRecipients = { session: [], channel_id: [] };
 
@@ -148,7 +153,7 @@ io.on('connection', function(socket){
 	    }
 	}
 
-	user.getMumbleConnection().sendMessage(textMessage.message, serverRecipients);
+	user.getMumbleConnection().sendMessage(textMessage, serverRecipients);
     });
 
     socket.on('disconnect', function() {
@@ -163,6 +168,16 @@ io.on('connection', function(socket){
 	    var movingUser = user.getMumbleConnection().userBySession(channelSwitch.id);
 	    movingUser.moveToChannel(channelSwitch.channelName);
 	}
+    });
+
+    socket.on('muteButton', function(muted) {
+	if(user.getMumbleConnection() && user.getMumbleConnection().user)
+	    user.getMumbleConnection().user.setSelfMute(muted);
+    });
+
+    socket.on('deafButton', function(muted) {
+	if(user.getMumbleConnection() && user.getMumbleConnection().user)
+	    user.getMumbleConnection().user.setSelfDeaf(muted);
     });
 
 });

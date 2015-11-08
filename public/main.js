@@ -164,6 +164,14 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	}
 	return false;
     };
+
+    $scope.muteButton = function() {
+	socket.emit('muteButton', $scope.user.muted);
+    };
+
+    $scope.deafButton = function() {
+	socket.emit('deafButton', $scope.user.deafened);
+    };
     
     var loginState = 0;
     var loginInfo = {};
@@ -235,6 +243,10 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	}
 	else {
 	    //else, sending message
+
+	    if($scope.msg.text=='')
+		return;
+	    
 	    var recipient = { //who to send message to
 		"isChannel": true, //todo: support sending to user
 		"id": currentChannel
@@ -246,7 +258,7 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 		"time": ''+d.getHours()+':'+d.getMinutes(),
 		"recipient": recipient
 	    };
-	    socket.emit('send msg', {"textMessage": textMessage, "recipient": recipient});
+	    socket.emit('send msg', textMessage);
 	}
 	$scope.msgs.push(textMessage);
 	$scope.msg.text = '';
@@ -263,7 +275,6 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
     });
     
     socket.on('textMessage', function(textMessage) {
-	console.log(textMessage);
 	//append local time to textMessage object as string
 	//(collected on client so locality is not an issue)
 	var d = new Date();
@@ -324,14 +335,26 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	    }
 	}
 
-	if(state.self_deaf==true) //user deafened, must be mute also
+	if(state.self_deaf==true) { //user deafened, must be mute also
 	    node.deafened = state.self_mute = true;
+	    if(node.name == loginInfo.userName) {
+		$scope.user.muted = $scope.user.deafened = true;
+	    }
+	}
 
-	if(state.self_deaf==false) //user undeafened
+	if(state.self_deaf==false) { //user undeafened
 	    node.deafened = false;
+	    if(node.name == loginInfo.userName) {
+		$scope.user.deafened = false;
+	    }
+	}
 
-	if(state.self_mute!=null) //updating user mute
+	if(state.self_mute!=null) { //updating user mute
 	    node.muted=state.self_mute;
+	    if(node.name == loginInfo.userName) {
+		$scope.user.muted = state.self_mute;
+	    }
+	}
     });
 
     socket.on('channelState', function(state) {

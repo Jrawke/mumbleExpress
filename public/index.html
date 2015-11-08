@@ -17,38 +17,38 @@
   <body>
 
     <div id="page-container">
-      <div id="header">
-	<input type="checkbox" class="icon" id="config_network"/>
-	<label for="config_network"></label>
-	<input type="checkbox" class="icon" id="information_icon"/>
-	<label for="information_icon"></label>
-	<input type="checkbox" class="icon" id="muted_self"/>
-	<label for="muted_self"></label>
-	<input type="checkbox" class="icon" id="deafened_self"/>
-	<label for="deafened_self"></label>
-	<input type="checkbox" class="icon" id="comment"/>
-	<label for="comment"></label>
-	<input type="checkbox" class="icon" id="config_basic"/>
-	<label for="config_basic"></label>
-      </div>
       <div ng-controller="mumbleExpressController">
+	<div id="header">
+	  <input type="checkbox" class="icon" id="config_network"/>
+	  <label for="config_network"></label>
+	  <input type="checkbox" class="icon" id="information_icon"/>
+	  <label for="information_icon"></label>
+	  <input type="checkbox" class="icon" ng-model="user.muted" ng-change="muteButton()" id="muted_self"/>
+	  <label for="muted_self"></label>
+	  <input type="checkbox" class="icon" ng-model="user.deafened" ng-change="deafButton()" id="deafened_self"/>
+	  <label for="deafened_self"></label>
+	  <input type="checkbox" class="icon" id="comment"/>
+	  <label for="comment"></label>
+	  <input type="checkbox" class="icon" id="config_basic"/>
+	  <label for="config_basic"></label>
+	</div>
 	<div id="users">
 	  
 	  <script type="text/ng-template" id="nodes_renderer.html">
 	    <!-- selected node -->
 	    <div ui-tree-handle ng-click="selectNode(node)" ng-mouseover="tempSelectNode(node)" ng-mouseleave="tempUnSelectNode()" ng-if="selectedNode(node)" id="selected">
-	      <img ng-if="!node.isChannel" src="icons/talking_off.svg" height="20" width="20">
+	      <img ng-if="!node.isChannel" src="scss/assets/icons/talking_off.svg" height="20" width="20"> <!-- todo, define image location in CSS -->
 	      {{node.name}}
-	      <img ng-if="node.muted" src="icons/muted_self.svg" height="20" width="20">
-	      <img ng-if="node.deafened" src="icons/deafened_self.svg" height="20" width="20">
+	      <img ng-if="node.muted" src="scss/assets/icons/muted_self.svg" height="20" width="20">
+	      <img ng-if="node.deafened" src="scss/assets/icons/deafened_self.svg" height="20" width="20">
 	    </div>
 
 	    <!-- else, unselected node -->
 	    <div ui-tree-handle ng-click="selectNode(node)" ng-mouseover="tempSelectNode(node)" ng-mouseleave="tempUnSelectNode()" ng-if="!selectedNode(node)">
-	      <img ng-if="!node.isChannel" src="icons/talking_off.svg" height="20" width="20">
+	      <img ng-if="!node.isChannel" src="scss/assets/icons/talking_off.svg" height="20" width="20">
 	      {{node.name}}
-	      <img ng-if="node.muted" src="icons/muted_self.svg" height="20" width="20">
-	      <img ng-if="node.deafened" src="icons/deafened_self.svg" height="20" width="20">
+	      <img ng-if="node.muted" src="scss/assets/icons/muted_self.svg" height="20" width="20">
+	      <img ng-if="node.deafened" src="scss/assets/icons/deafened_self.svg" height="20" width="20">
 	    </div>
 	    
 	    <ol ui-tree-nodes="" ng-model="node.children">
