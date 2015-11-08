@@ -60,17 +60,55 @@ function isValidUsername(str) {
     return /^[-=\w\[\]\{\}\(\)\@\|\.]+$/.test(str);
 }
 
+function decodeSample(a, b) {
+    var ret = (a << 8) + b;
+    if(ret > 32767) {
+	ret = ret - 65536;
+    }
+    return ret/32768;
+}
+
+var audioBufferPos = 0;
+var audioBuffer = [];
+
+function pcmSource() {
+    if(audioBufferPos == audioBuffer.length) {
+	return 0;
+    } else {
+	return audioBuffer[audioBufferPos++];
+    }
+}
+
+var audioContext;
+try {
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioContext = new AudioContext();
+} catch(e) {
+    alert('Web Audio API is not supported in this browser');
+}
+
+var bufferSize = 4096;
+var pcmProcessingNode = audioContext.createScriptProcessor(bufferSize, 1, 1);
+pcmProcessingNode.onaudioprocess = function(e) {
+    var output = e.outputBuffer.getChannelData(0);
+    for (var i = 0; i < bufferSize; i++) {
+	// Generate and copy over PCM samples.
+	output[i] = pcmSource(); 
+    }
+}
+pcmProcessingNode.connect(audioContext.destination);
+
 app.controller('mumbleExpressController', function($scope, $notification, socket){
 
     //set up html5 notifications
     function notify(textMessage) {
 	var notification = $notification(textMessage.userName + " sent a message at " + textMessage.time, {
-		body: textMessage.message,
-		//icon:'icon.png',
-		dir:'auto',
-		focusWindowOnClick: true,
-		delay: 8000
-		});
+	    body: textMessage.message,
+	    //icon:'icon.png',
+	    dir:'auto',
+	    focusWindowOnClick: true,
+	    delay: 8000
+	});
     }
 
     $notification.requestPermission();
@@ -218,6 +256,13 @@ app.controller('mumbleExpressController', function($scope, $notification, socket
 	notify(textMessage);
     });
 
+    socket.on('voiceMessage', function(data) {
+	data = new Uint8Array(data);
+	for(var i = 0; i < data.length; i += 2) {
+	    audioBuffer.push(decodeSample(data[i+1], data[i]));
+	}
+	console.log("voice");
+    });
    
     socket.on('userState', function(state) {
 	if(state.name) { // a new user connected

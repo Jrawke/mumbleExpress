@@ -30,7 +30,7 @@ function User(socket) {
     };
 
     var onVoice = function(data) {
-	//console.log( 'Mixed voice' );
+	io.sockets.connected[socket].emit("voiceMessage", data);
     };
 
     var onText = function(data) {
