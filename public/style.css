@@ -184,12 +184,12 @@ ul {
   font-weight: bold;
 }
 
-/* line 152, scss/style.scss */
+/* line 154, scss/style.scss */
 input[type="checkbox"] {
   display: none;
 }
 
-/* line 157, scss/style.scss */
+/* line 159, scss/style.scss */
 input[type="checkbox"] + label[for="config_network"] {
   width: 30px;
   height: 30px;
@@ -202,13 +202,13 @@ input[type="checkbox"] + label[for="config_network"] {
   background-size: 100%;
 }
 
-/* line 172, scss/style.scss */
+/* line 174, scss/style.scss */
 input[type="checkbox"]:checked + label[for="config_network"] {
   background: url("scss/assets/icons/config_network.png") no-repeat;
   background-size: 100%;
 }
 
-/* line 157, scss/style.scss */
+/* line 159, scss/style.scss */
 input[type="checkbox"] + label[for="information_icon"] {
   width: 30px;
   height: 30px;
@@ -221,13 +221,13 @@ input[type="checkbox"] + label[for="information_icon"] {
   background-size: 100%;
 }
 
-/* line 172, scss/style.scss */
+/* line 174, scss/style.scss */
 input[type="checkbox"]:checked + label[for="information_icon"] {
   background: url("scss/assets/icons/Information_icon.svg") no-repeat;
   background-size: 100%;
 }
 
-/* line 157, scss/style.scss */
+/* line 159, scss/style.scss */
 input[type="checkbox"] + label[for="muted_self"] {
   width: 30px;
   height: 30px;
@@ -236,17 +236,17 @@ input[type="checkbox"] + label[for="muted_self"] {
   margin-bottom: 10px;
   margin-left: 10px;
   display: inline-block;
-  background: url("scss/assets/icons/muted_self.svg") no-repeat;
-  background-size: 100%;
-}
-
-/* line 172, scss/style.scss */
-input[type="checkbox"]:checked + label[for="muted_self"] {
   background: url("scss/assets/icons/audio-input-microphone.svg") no-repeat;
   background-size: 100%;
 }
 
-/* line 157, scss/style.scss */
+/* line 174, scss/style.scss */
+input[type="checkbox"]:checked + label[for="muted_self"] {
+  background: url("scss/assets/icons/muted_self.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 159, scss/style.scss */
 input[type="checkbox"] + label[for="deafened_self"] {
   width: 30px;
   height: 30px;
@@ -255,17 +255,17 @@ input[type="checkbox"] + label[for="deafened_self"] {
   margin-bottom: 10px;
   margin-left: 10px;
   display: inline-block;
-  background: url("scss/assets/icons/deafened_self.svg") no-repeat;
-  background-size: 100%;
-}
-
-/* line 172, scss/style.scss */
-input[type="checkbox"]:checked + label[for="deafened_self"] {
   background: url("scss/assets/icons/self_undeafened.svg") no-repeat;
   background-size: 100%;
 }
 
-/* line 157, scss/style.scss */
+/* line 174, scss/style.scss */
+input[type="checkbox"]:checked + label[for="deafened_self"] {
+  background: url("scss/assets/icons/deafened_self.svg") no-repeat;
+  background-size: 100%;
+}
+
+/* line 159, scss/style.scss */
 input[type="checkbox"] + label[for="comment"] {
   width: 30px;
   height: 30px;
@@ -278,13 +278,13 @@ input[type="checkbox"] + label[for="comment"] {
   background-size: 100%;
 }
 
-/* line 172, scss/style.scss */
+/* line 174, scss/style.scss */
 input[type="checkbox"]:checked + label[for="comment"] {
   background: url("scss/assets/icons/comment.svg") no-repeat;
   background-size: 100%;
 }
 
-/* line 157, scss/style.scss */
+/* line 159, scss/style.scss */
 input[type="checkbox"] + label[for="config_basic"] {
   width: 30px;
   height: 30px;
@@ -297,7 +297,7 @@ input[type="checkbox"] + label[for="config_basic"] {
   background-size: 100%;
 }
 
-/* line 172, scss/style.scss */
+/* line 174, scss/style.scss */
 input[type="checkbox"]:checked + label[for="config_basic"] {
   background: url("scss/assets/icons/config_basic.png") no-repeat;
   background-size: 100%;

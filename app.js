@@ -47,9 +47,8 @@ function User(socket) {
     };
 
     var onInit = function() {
-	console.log( 'Connection initialized' );
-	_isInitialized = true;
 	_inputStream = mumbleClient.inputStream({sampleRate: _clientSampleRate, channels: 1, gain: 1});
+	_isInitialized = true;
 	// Connection is authenticated and usable.
     };
 
@@ -82,21 +81,21 @@ function User(socket) {
 
     var onChannelState = function(state) {
 	io.sockets.connected[socket].emit("channelState",state);
-    }
+    };
 
     var onChannelRemove = function (state) {
 	io.sockets.connected[socket].emit("channelRemove",state);
-    }
+    };
 
     var onError = function (err) {
 	io.sockets.connected[socket].emit("errorMessage",err.message);
-    }
+    };
 
     this.getMumbleConnection = function() {
 	return mumbleClient;
     };
 
-    this.doConnect = function(serverAddress, username, password, key, cert) {
+    this.doConnect = function(serverAddress, username, password, mute, deaf, key, cert) {
 	// TODO: if key and cert are not undefined, make a custom options object for this user
 	mumble.connect( serverAddress, MUMBLE_OPTIONS, function ( error, client ) {
 	    try {
@@ -106,9 +105,8 @@ function User(socket) {
 		    throw new Error( error );
 		}
 
-		console.log( 'Connected' );
-
 		client.authenticate( username );
+
 		client.on('initialized', onInit );
 		client.on('voice', onVoice );
 		client.on('textMessage', onText );
@@ -118,8 +116,11 @@ function User(socket) {
 		client.on('channelRemove', onChannelRemove);
 		client.on('error', onError);
 		client.on('ready', function() {
-		    console.log("client ready");
-		    // console.log(client.users());
+		    if(deaf)
+			client.user.setSelfDeaf(deaf);
+		    else if(mute)
+			client.user.setSelfMute(mute);
+		    io.sockets.connected[socket].emit("ready");
 		});
 	    }
 	    catch(e) {
@@ -132,7 +133,6 @@ function User(socket) {
     this.disconnect = function() {
 	if(mumbleClient) {
 	    mumbleClient.disconnect();
-	    console.log('disconnected');
 	}
     }
 }
@@ -147,7 +147,7 @@ io.on('connection', function(socket){
 	}
 	var password = loginInfo.password == '' ? null : loginInfo.password;
 	var serverAddress = 'mumble://'+loginInfo.ip+':'+loginInfo.port;
-	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password);
+	user.doConnect(serverAddress, loginInfo.userName, loginInfo.password, loginInfo.muted, loginInfo.deafened);
     });
 
     socket.on('send msg', function(message) {
@@ -194,14 +194,19 @@ io.on('connection', function(socket){
 	}
     });
 
-    socket.on('muteButton', function(muted) {
-	if(user.getMumbleConnection() && user.getMumbleConnection().user)
-	    user.getMumbleConnection().user.setSelfMute(muted);
+    socket.on('muteButton', function(isMuted) {
+	if(!user.getMumbleConnection() || !user.getMumbleConnection().user)
+	    return
+	user.getMumbleConnection().user.setSelfMute(isMuted);
     });
 
-    socket.on('deafButton', function(muted) {
-	if(user.getMumbleConnection() && user.getMumbleConnection().user)
-	    user.getMumbleConnection().user.setSelfDeaf(muted);
+    socket.on('deafButton', function(isSelfMuteAndDeaf) {
+	if(!user.getMumbleConnection() || !user.getMumbleConnection().user)
+	    return
+	else if(!isSelfMuteAndDeaf.selfMute && !isSelfMuteAndDeaf.selfDeaf)
+	    user.getMumbleConnection().user.setSelfMute(false);
+	else
+	    user.getMumbleConnection().user.setSelfDeaf(isSelfMuteAndDeaf.selfDeaf);
     });
 
     socket.on('bitrate', function(bitrate) {
@@ -219,7 +224,7 @@ io.on('connection', function(socket){
 	}
     });
 });
-
+    
 function ensureSecure(req, res, next){
     if(req.secure){
 	// OK, continue
