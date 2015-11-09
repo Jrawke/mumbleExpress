@@ -24,8 +24,32 @@ function User(socket) {
     //store the state of users connected to mumble server
     var sessions = {}
 
+    var _isInitialized = false;
+
+    var _inputStream = null;
+
+    var _clientSampleRate = 0;
+
+    this.isInitialized = function() {
+	return _isInitialized;
+    };
+
+    this.getInputStream = function() {
+	return _inputStream;
+    };
+
+    this.getSampleRate = function() {
+	return _clientSampleRate;
+    };
+
+    this.setSampleRate = function(sampleRate) {
+	_clientSampleRate = sampleRate;
+    };
+
     var onInit = function() {
 	console.log( 'Connection initialized' );
+	_isInitialized = true;
+	_inputStream = mumbleClient.inputStream({sampleRate: _clientSampleRate, channels: 1, gain: 1});
 	// Connection is authenticated and usable.
     };
 
@@ -180,6 +204,20 @@ io.on('connection', function(socket){
 	    user.getMumbleConnection().user.setSelfDeaf(muted);
     });
 
+    socket.on('bitrate', function(bitrate) {
+	user.setSampleRate(bitrate);
+    });
+
+    socket.on('microphone', function(voiceMessage) {
+	if(user.isInitialized()) {
+	    var buf = new Buffer(4096);
+	    for(var i = 0; i < 2048; i++) {
+		buf[2*i+1] = Math.floor(voiceMessage[i]/256);
+		buf[2*i] = voiceMessage[i] & 0xff;
+	    }
+	    user.getInputStream().write(buf);
+	}
+    });
 });
 
 function ensureSecure(req, res, next){
