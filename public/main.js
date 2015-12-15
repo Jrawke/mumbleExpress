@@ -3,4 +3,3 @@ var app = angular.module('mumbleExpressApp', ['luegg.directives', 'btford.socket
 app.factory('socket', function (socketFactory) {
     return socketFactory();
 });
-

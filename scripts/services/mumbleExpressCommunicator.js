@@ -1,3 +1,5 @@
-module.service( 'mumbleExpressCommunicator', [ '$rootScope', function( $rootScope ) {
+module.service( 'mumbleExpressCommunicator', function( $rootScope, socket ) {
+
     
-}]);
+    
+});

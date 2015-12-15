@@ -1,4 +1,4 @@
-app.controller('mumbleExpressController', function($scope, /*notification,*/ $rootScope, channelTree, socket) {
+app.controller('mumbleExpressController', function($scope, /*notification,*/ $rootScope, channelTree, mumbleChat, socket) {
 
     var defaultUsername = "MumbleExpress";
 
@@ -114,16 +114,15 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
     };
 
     //set up message box
-    var d = new Date();
-    $scope.msgs = [
-	{
-	    "userName": defaultUsername,
-	    "message": "Enter server address",
-	    "time": ''+d.getHours()+':'+d.getMinutes()
-	}
-    ];
-    d = null;
+    $scope.msgs = mumbleChat.messages;
 
+    //update object in controller when chatLog is changed
+    $scope.$on( 'chatLog.update', function( event ) {
+	$scope.msgs = mumbleChat.messages;
+    });
+
+    mumbleChat.addMessage(defaultUsername, "Enter server address")
+    
     //set up buttons
     $scope.user = {};
     $scope.user.muted = true;
@@ -200,58 +199,33 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
     
     $scope.sendMsg = function() {
 	//connect to the server using first few messages as info
-	var d = new Date();
 	if(loginState == 0) { //server ip
 	    if(isValidHostname($scope.msg.text)) {
 		loginInfo.ip = $scope.msg.text;
 		loginState++;
-		var textMessage = {
-		    "userName": defaultUsername,
-		    "message": "Enter port (if blank, will be default of 64738)",
-		    "time": ''+d.getHours()+':'+d.getMinutes(),
-		    "recipient": null
-		}
+		var msg = "Enter port (if blank, will be default of 64738)";
+		mumbleChat.addMessage(defaultUsername, msg);
 	    }
 	    else {
-	    	var textMessage = {
-	    	    "userName": defaultUsername,
-	    	    "message": "\"" + $scope.msg.text + "\" is not a valid hostname. Reenter server address",
-	    	    "time": ''+d.getHours()+':'+d.getMinutes(),
-		    "recipient": null
-	    	};
-		$scope.msgs.push(textMessage);
+		var msg = "\"" + $scope.msg.text + "\" is not a valid hostname. Reenter server address";
+		mumbleChat.addMessage(defaultUsername,msg);
 		return;
 	    }
 	}
 	else if(loginState == 1) { //port
 	    loginInfo.port = $scope.msg.text == '' ? "64738" : $scope.msg.text;
 	    loginState++;
-	    var textMessage = {
-		"userName": defaultUsername,
-		"message": "Enter user name",
-		"time": ''+d.getHours()+':'+d.getMinutes(),
-		"recipient": null
-	    }
+	    mumbleChat.addMessage(defaultUsername, "Enter user name");
 	}
 	else if(loginState == 2) { //username
 	    if(isValidUsername($scope.msg.text)) {
 		loginInfo.userName = $scope.msg.text;
 		loginState++;
-		var textMessage = {
-		    "userName": defaultUsername,
-		    "message": "Enter password",
-		    "time": ''+d.getHours()+':'+d.getMinutes(),
-		    "recipient": null
-		}
+		mumbleChat.addMessage(defaultUsername, "Enter password");
 	    }
 	    else {
-		var textMessage = {
-		    "userName": defaultUsername,
-	    	    "message": "\"" + $scope.msg.text + "\" is not a valid username. Reenter server address",
-		    "time": ''+d.getHours()+':'+d.getMinutes(),
-		    "recipient": null
-		}
-		$scope.msgs.push(textMessage);
+		var msg = "\"" + $scope.msg.text + "\" is not a valid username. Reenter server address";
+		mumbleChat.addMessage(defaultUsername, msg);
 		return;
 	    }
 	}
@@ -276,38 +250,20 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
 		"id": currentChannel
 	    };
 
-	    var textMessage = {
-		"userName": loginInfo.userName,
-		"message": $scope.msg.text,
-		"time": ''+d.getHours()+':'+d.getMinutes(),
-		"recipient": recipient
-	    };
-	    socket.emit('send msg', textMessage);
+	    mumbleChat.addMessage(loginInfo.userName, $scope.msg.text, recipient);
 	}
-	$scope.msgs.push(textMessage);
 	$scope.msg.text = '';
     };
 
     socket.on('errorMessage', function(errorMessage) {
-	var d = new Date();
-	var textMessage = {
-	    "userName": defaultUsername,
-	    "message": errorMessage,
-	    "time": ''+d.getHours()+':'+d.getMinutes()
-	}
-	$scope.msgs.push(textMessage);
+	mumbleChat.addMessage(defaultUsername, errorMessage);
     });
     
     socket.on('textMessage', function(textMessage) {
-	//append local time to textMessage object as string
-	//(collected on client so locality is not an issue)
-	var d = new Date();
-	textMessage["time"]=''+d.getHours()+':'+d.getMinutes();
-	textMessage["recipient"]=null; //incoming message
-
-	//receive remote message
-	$scope.msgs.push(textMessage);
-	notify(textMessage);
+	//todo: find better way to do this
+	//see notes in services/chatLog.js
+	mumbleChat.incomingMessage(textMessage);
+	//notify(textMessage);
     });
 
     socket.on('voiceMessage', function(data) {
@@ -340,14 +296,7 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
 	    };
 	    if(initialized) {
 		//log the connection to chatbox
-		var d = new Date();
-		var textMessage = {
-		    "userName": node.name,
-	    	    "message": "connected",
-		    "time": ''+d.getHours()+':'+d.getMinutes(),
-		    "recipient": null
-		}
-		$scope.msgs.push(textMessage);
+		mumbleChat.addMessage(node.name, "connected")
 	    }
 
 	    var parentChannel = state.channel_id;
@@ -382,14 +331,7 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
 	    else {
 		//log the move to chatbox
 		var newChannel = channelTree.getFromTree(true, state.channel_id);
-		var d = new Date();
-		var textMessage = {
-		    "userName": node.name,
-	    	    "message": "moved to "+newChannel.name,
-		    "time": ''+d.getHours()+':'+d.getMinutes(),
-		    "recipient": null
-		}
-		$scope.msgs.push(textMessage);
+		mumbleChat.addMessage(node.name, "moved to "+newChannel.name);
 	    }
 	}
 
@@ -425,14 +367,7 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
 		muteDeafMessage = "muted";
 	    else if(state.self_mute == false)
 		muteDeafMessage = "unmuted";
-	    var d = new Date();
-	    var textMessage = {
-		"userName": node.name,
-		"message": muteDeafMessage,
-		"time": ''+d.getHours()+':'+d.getMinutes(),
-		"recipient": null
-	    };
-	    $scope.msgs.push(textMessage);
+	    mumbleChat.addMessage(node.name, muteDeafMessage);
 	}
 
     });
@@ -460,14 +395,7 @@ app.controller('mumbleExpressController', function($scope, /*notification,*/ $ro
     socket.on('userRemove', function(state) {
 	node = channelTree.getFromTree(false,state.session);
 	//log the disconnection to chatbox
-	var d = new Date();
-	var textMessage = {
-	    "userName": node.name,
-	    "message": "disconnected",
-	    "time": ''+d.getHours()+':'+d.getMinutes(),
-	    "recipient": null
-	}
-	$scope.msgs.push(textMessage);
+	mumbleChat.addMessage(node.name, "disconnected");
 
 	channelTree.deleteFromTree(false, state.session);
     });
