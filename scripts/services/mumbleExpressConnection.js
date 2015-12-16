@@ -8,7 +8,9 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
     var defaultUsername = "MumbleExpress";
     
     var service = {
-	user : { //user mute & deaf state
+
+	user : {
+	    name: null,
 	    muted: true,
 	    deafened: false
 	},
@@ -29,7 +31,9 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 	},
 
 	setLoginInfo: function(li) {
+	    service.user.name = loginInfo.userName;
 	    loginInfo = li;
+	    $rootScope.$broadcast( 'connectionUpdate' );
 	    socket.emit('login', loginInfo);
 	}
 
@@ -83,6 +87,7 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 	    if(node.name == loginInfo.userName) { //updating the user's position
 		loginInfo.session = node.session;
 		service.currentChannel = parentChannel;
+		$rootScope.$broadcast( 'connectionUpdate' );
 	    }
 
 
@@ -99,6 +104,7 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 
 	    if(state.session == loginInfo.session) { //updating the user's position
 		service.currentChannel = state.channel_id;
+		$rootScope.$broadcast( 'connectionUpdate' );
 		//$scope.selectNode(node); //when user moves, select new channel by default
 	    }
 	    else {
@@ -112,7 +118,7 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 	    node.deafened = state.self_mute = true;
 	    if(node.name == loginInfo.userName) {
 		service.user.muted = service.user.deafened = true;
-		$rootScope.$broadcast( 'muteDeafUpdate' );
+		$rootScope.$broadcast( 'connectionUpdate' );
 	    }
 	}
 
@@ -120,7 +126,7 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 	    node.deafened = false;
 	    if(node.name == loginInfo.userName) {
 		service.user.deafened = false;
-		$rootScope.$broadcast( 'muteDeafUpdate' );
+		$rootScope.$broadcast( 'connectionUpdate' );
 	    }
 	}
 
@@ -128,7 +134,7 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 	    node.muted=state.self_mute;
 	    if(node.name == loginInfo.userName) {
 		service.user.muted = state.self_mute;
-		$rootScope.$broadcast( 'muteDeafUpdate' );
+		$rootScope.$broadcast( 'connectionUpdate' );
 	    }
 	}
 
