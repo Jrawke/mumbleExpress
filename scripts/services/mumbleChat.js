@@ -2,7 +2,9 @@ app.service( 'mumbleChat', function( $rootScope , socket) {
 
     var service = {
 	messages: [],
-	
+
+	//send a message to the server. If no recipient is specified,
+	//it will only log the message to the chatBox.
 	addMessage: function (userName, message, recipient) {
 	    if(typeof(recipient) == 'undefined')
 		recipient = null;
@@ -17,7 +19,7 @@ app.service( 'mumbleChat', function( $rootScope , socket) {
 	    service.messages.push(textMessage);
 	    if(recipient)
 		socket.emit('send msg', textMessage);
-	    $rootScope.$broadcast( 'chatLog.update' );
+	    $rootScope.$broadcast( 'mumbleChat.update' );
 	},
 
 	//if server sends message with additional info then supported in
@@ -32,7 +34,7 @@ app.service( 'mumbleChat', function( $rootScope , socket) {
 	    textMessage["recipient"]=null; //incoming message
 
 	    service.messages.push(textMessage);
-	    $rootScope.$broadcast('chatLog.update');
+	    $rootScope.$broadcast('mumbleChat.update');
 	}
     };
 
