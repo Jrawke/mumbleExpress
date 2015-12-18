@@ -36,7 +36,7 @@ var channelTreeController = function($scope, $rootScope, channelTree, socket) {
 
 	    //move node back to original position in tree.
 	    //if the position changes, server will tell us
-	    srcObjId = srcObj.isChannel? srcObj.channelId : srcObj.session;
+	    var srcObjId = srcObj.isChannel? srcObj.channelId : srcObj.session;
 	    channelTree.deleteFromTree(srcObj.isChannel, srcObjId);
 	    channelTree.insertIntoTree(srcObj, srcParent.channelId);
 	}

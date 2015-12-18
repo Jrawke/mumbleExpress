@@ -13,7 +13,7 @@ var chatBoxController = function($scope, $rootScope, mumbleChat, mumbleExpressCo
     }
 
     $scope.getChannelNameFromId = function (channelId) {
-	node = channelTree.getFromTree(true,channelId);
+	var node = channelTree.getFromTree(true,channelId);
 	return node.name;
     };
     

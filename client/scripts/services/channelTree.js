@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 var channelTree = function( $rootScope ) {
 
@@ -7,7 +7,7 @@ var channelTree = function( $rootScope ) {
 	    tree.push(node);
 	    return true;
 	}
-	for (child of tree) {
+	for (var child of tree) {
 	    if(child.isChannel && child.channelId == parentChannel) {
 		child.children.push(node);
 		return true;
@@ -20,7 +20,7 @@ var channelTree = function( $rootScope ) {
 
     function deleteFromTreeAux (isChannel, id, tree) {
 	var i=0;
-	for (child of tree) {
+	for (var child of tree) {
 	    if( (isChannel == child.isChannel)
 		&& ((isChannel? child.channelId : child.session) == id)) {
 		tree.splice(i,1);
@@ -34,7 +34,7 @@ var channelTree = function( $rootScope ) {
     }
 
     function getFromTreeAux (isChannel, id, tree) {
-	for (child of tree) {
+	for (var child of tree) {
 	    if((isChannel? child.channelId : child.session) == id)
 		return child;
 
