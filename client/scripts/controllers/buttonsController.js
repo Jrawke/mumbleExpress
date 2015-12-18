@@ -1,7 +1,5 @@
 'use strict';
 
-var mumbleExpressConnection = require('../services/mumbleExpressConnection');
-
 var buttonsController = function($scope, mumbleExpressConnection) {
 
     //set up buttons
