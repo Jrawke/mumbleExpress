@@ -10,12 +10,20 @@ var mumbleChat = function( $rootScope , socket) {
 	addMessage: function (userName, message, recipient) {
 	    if(typeof(recipient) == 'undefined')
 		recipient = null;
+
+	    // Prepend num with zeros until it is 'places' long.
+	    // ex: zeroPad(5, 3) -> '005'
+	    // ex: zeroPad(1234, 1) -> '1234'
+	    var zeroPad = function(num, places) {
+		var zero = places - num.toString().length + 1;
+		return Array(+(zero > 0 && zero)).join("0") + num;
+	    }
 	    
 	    var d = new Date();
 	    var textMessage = {
 		"userName": userName,
 		"message": message,
-	    	"time": ''+d.getHours()+':'+d.getMinutes(),
+	    	"time": '' + zeroPad(d.getHours(), 2) + ':' + zeroPad(d.getMinutes(), 2),
 		"recipient": recipient
 	    };
 	    service.messages.push(textMessage);
