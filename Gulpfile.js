@@ -2,9 +2,10 @@ var gulp = require('gulp'),
     browserify = require('gulp-browserify'),
     concat = require('gulp-concat'),
     clean = require('gulp-clean'),
-    compass = require('gulp-compass');
+    compass = require('gulp-compass'),
+    bower = require('gulp-bower');
 
-gulp.task('browserify', function() {
+gulp.task('browserify', ['bower'], function() {
     gulp.src(['client/scripts/main.js'])
 	.pipe(browserify({
 	    insertGlobals: true,
@@ -23,7 +24,7 @@ gulp.task('views', function() {
 });
 
 gulp.task('compass', function() {
-    gulp.src('./client/styles/sass/*')
+    gulp.src('./client/styles/sass/*.scss')
         .pipe(compass({
 	    config_file: './client/styles/config.rb',
 	    css: './dist/',
@@ -35,7 +36,10 @@ gulp.task('compass', function() {
 	.pipe(gulp.dest('dist/icons'));
 });
 
+gulp.task('bower', function() {
+    return bower()
+});
+
 gulp.task('default', function() {
     gulp.run('browserify', 'views', 'compass');
 });
-	  

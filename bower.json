@@ -1,0 +1,6 @@
+{
+  "name": "mumbleExpress",
+  "dependencies": {
+    "angular-ui-tree": "~2.11.0"
+  }
+}
