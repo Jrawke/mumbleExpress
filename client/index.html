@@ -37,18 +37,18 @@
 	    <script type="text/ng-template" id="nodes_renderer.html">
 	      <!-- selected node -->
 	      <div ui-tree-handle ng-click="selectNode(node)" ng-mouseover="tempSelectNode(node)" ng-mouseleave="tempUnSelectNode()" ng-if="selectedNode(node)" id="selected">
-		<img ng-if="!node.isChannel" src="scss/assets/icons/talking_off.svg" height="20" width="20"> <!-- todo, define image location in CSS -->
+		<img ng-if="!node.isChannel" src="icons/talking_off.svg" height="20" width="20"> <!-- todo, define image location in CSS -->
 		{{node.name}}
-		<img ng-if="node.muted" src="scss/assets/icons/muted_self.svg" height="20" width="20">
-		<img ng-if="node.deafened" src="scss/assets/icons/deafened_self.svg" height="20" width="20">
+		<img ng-if="node.muted" src="icons/muted_self.svg" height="20" width="20">
+		<img ng-if="node.deafened" src="icons/deafened_self.svg" height="20" width="20">
 	      </div>
 
 	      <!-- else, unselected node -->
 	      <div ui-tree-handle ng-click="selectNode(node)" ng-mouseover="tempSelectNode(node)" ng-mouseleave="tempUnSelectNode()" ng-if="!selectedNode(node)">
-		<img ng-if="!node.isChannel" src="scss/assets/icons/talking_off.svg" height="20" width="20">
+		<img ng-if="!node.isChannel" src="icons/talking_off.svg" height="20" width="20">
 		{{node.name}}
-		<img ng-if="node.muted" src="scss/assets/icons/muted_self.svg" height="20" width="20">
-		<img ng-if="node.deafened" src="scss/assets/icons/deafened_self.svg" height="20" width="20">
+		<img ng-if="node.muted" src="icons/muted_self.svg" height="20" width="20">
+		<img ng-if="node.deafened" src="icons/deafened_self.svg" height="20" width="20">
 	      </div>
 	      
 	      <ol ui-tree-nodes="" ng-model="node.children">
