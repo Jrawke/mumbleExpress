@@ -1,4 +1,6 @@
-app.controller('channelTreeController', function($scope, $rootScope, channelTree, socket) {
+'use strict';
+
+var channelTreeController = function($scope, $rootScope, channelTree, socket) {
 
     $scope.channelTree = channelTree.tree;
 
@@ -80,4 +82,6 @@ app.controller('channelTreeController', function($scope, $rootScope, channelTree
 	return false;
     };
     
-});
+};
+
+module.exports = channelTreeController;

@@ -1,4 +1,6 @@
-app.service( 'channelTree', function( $rootScope ) {
+//'use strict';
+
+var channelTree = function( $rootScope ) {
 
     function insertIntoTreeAux (node, parentChannel, tree) {
 	if(parentChannel==null) { //root
@@ -72,4 +74,6 @@ app.service( 'channelTree', function( $rootScope ) {
     };
 
     return service;
-});
+};
+
+module.exports = channelTree;

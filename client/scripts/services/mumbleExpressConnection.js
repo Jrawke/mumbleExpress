@@ -1,4 +1,6 @@
-app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbleChat, socket ) {
+'use strict';
+
+var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, socket ) {
     //this service handles all server communication and logic needed for
     //recording connection state. It does this by handling incoming messages
     //from the server and using them to update underlying data structures.
@@ -184,4 +186,6 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 
     return service;
     
-});
+};
+
+module.exports = mumbleExpressConnection;

@@ -1,4 +1,6 @@
-app.controller('mumbleExpressController', function($notification, audio) {
+'use strict';
+
+var mumbleExpressController = function($notification, audio) {
 
     //set up html5 notifications
 
@@ -28,4 +30,6 @@ app.controller('mumbleExpressController', function($notification, audio) {
     } else alert('getUserMedia not supported in this browser.'); //todo: set mute/deaf
 
 
-});
+};
+
+module.exports = mumbleExpressController;

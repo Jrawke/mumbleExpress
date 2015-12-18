@@ -1,4 +1,6 @@
-app.controller('chatBoxController', function($scope, $rootScope, mumbleChat, mumbleExpressConnection, channelTree) {
+'use strict';
+
+var chatBoxController = function($scope, $rootScope, mumbleChat, mumbleExpressConnection, channelTree) {
 
     var defaultUsername = "MumbleExpress";
 
@@ -94,4 +96,6 @@ app.controller('chatBoxController', function($scope, $rootScope, mumbleChat, mum
 	}
 	$scope.msg.text = '';
     };    
-});
+};
+
+module.exports = chatBoxController;
