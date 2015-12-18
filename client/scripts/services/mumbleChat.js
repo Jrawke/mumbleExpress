@@ -2,6 +2,14 @@
 
 var mumbleChat = function( $rootScope , socket) {
 
+    // Prepend num with zeros until it is 'places' long.
+    // ex: zeroPad(5, 3) -> '005'
+    // ex: zeroPad(1234, 1) -> '1234'
+    function zeroPad (num, places) {
+	var zero = places - num.toString().length + 1;
+	return Array(+(zero > 0 && zero)).join("0") + num;
+    }
+
     var service = {
 	messages: [],
 
@@ -11,14 +19,6 @@ var mumbleChat = function( $rootScope , socket) {
 	    if(typeof(recipient) == 'undefined')
 		recipient = null;
 
-	    // Prepend num with zeros until it is 'places' long.
-	    // ex: zeroPad(5, 3) -> '005'
-	    // ex: zeroPad(1234, 1) -> '1234'
-	    var zeroPad = function(num, places) {
-		var zero = places - num.toString().length + 1;
-		return Array(+(zero > 0 && zero)).join("0") + num;
-	    }
-	    
 	    var d = new Date();
 	    var textMessage = {
 		"userName": userName,
