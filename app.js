@@ -87,8 +87,14 @@ function User(socket) {
 	io.sockets.connected[socket].emit("channelRemove",state);
     };
 
-    var onError = function (err) {
-	io.sockets.connected[socket].emit("errorMessage",err.message);
+    var onMumbleConnectionError = function (err) {
+	io.sockets.connected[socket].emit("errorMessage",err.reason);
+
+	// If the mumble connection gets an error for any reason,
+	// close the connection and prompt the user to reenter the
+	// server info.
+	this.disconnect();
+	io.sockets.connected[socket].emit("tryReconnect");
     };
 
     this.getMumbleConnection = function() {
@@ -114,7 +120,7 @@ function User(socket) {
 		client.on('userRemove', onUserRemove);
 		client.on('channelState', onChannelState);
 		client.on('channelRemove', onChannelRemove);
-		client.on('error', onError);
+		client.on('error', onMumbleConnectionError);
 		client.on('ready', function() {
 		    if(deaf)
 			client.user.setSelfDeaf(deaf);

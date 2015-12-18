@@ -36,6 +36,12 @@ app.controller('chatBoxController', function($scope, $rootScope, mumbleChat, mum
 
     var loginState = 0;
     var loginInfo = {};
+
+    $rootScope.resetLoginState = function() {
+	loginState = 0;
+	loginInfo = {};
+	mumbleChat.addMessage(defaultUsername, "Retrying login. Enter server address")
+    };
     
     $scope.sendMsg = function() {
 	//connect to the server using first few messages as info

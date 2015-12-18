@@ -25,7 +25,7 @@ app.service( 'audio', function(socket) {
 	} else {
 	    var ret = audioBuffer[audioBufferPos];
 	    delete audioBuffer[audioBufferPos];
-	    audioBufferPos++; // Could overflow in double-precision arithmetic
+	    audioBufferPos++; // Could get stuck in double-precision arithmetic
 	    return ret;
 	}
     }

@@ -54,6 +54,10 @@ app.service( 'mumbleExpressConnection', function( $rootScope, channelTree, mumbl
 	mumbleChat.incomingMessage(textMessage);
 	//notify(textMessage);
     });
+
+    socket.on('tryReconnect', function() {
+	$rootScope.resetLoginState();
+    });
     
     socket.on('userState', function(state) {
 	if(state.name) { // a new user connected
