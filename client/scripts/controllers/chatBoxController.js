@@ -66,7 +66,7 @@ var chatBoxController = function($scope, $rootScope, mumbleChat, mumbleExpressCo
 		mumbleChat.addMessage(defaultUsername, "Enter password");
 	    }
 	    else {
-		var msg = "\"" + $scope.msg.text + "\" is not a valid username. Reenter server address";
+		var msg = "\"" + $scope.msg.text + "\" is not a valid username. Reenter username";
 		mumbleChat.addMessage(defaultUsername, msg);
 		return;
 	    }

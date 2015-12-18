@@ -25,7 +25,10 @@ var audio = function(socket) {
 	if(audioBufferPos == audioBuffer.length) {
 	    return 0;
 	} else {
-	    return audioBuffer[audioBufferPos++];
+	    var ret = audioBuffer[audioBufferPos];
+	    delete audioBuffer[audioBufferPos];
+	    audioBufferPos++; // Could overflow in double-precision arithmetic
+	    return ret;
 	}
     }
 
