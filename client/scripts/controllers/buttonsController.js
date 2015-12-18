@@ -1,4 +1,8 @@
-app.controller('buttonsController', function($scope, mumbleExpressConnection) {
+'use strict';
+
+var mumbleExpressConnection = require('../services/mumbleExpressConnection');
+
+var buttonsController = function($scope, mumbleExpressConnection) {
 
     //set up buttons
     $scope.user = mumbleExpressConnection.user;
@@ -23,4 +27,6 @@ app.controller('buttonsController', function($scope, mumbleExpressConnection) {
 
 	mumbleExpressConnection.setMute($scope.user.muted);
     };
-});
+};
+
+module.exports = buttonsController;

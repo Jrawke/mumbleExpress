@@ -1,4 +1,6 @@
-app.controller('channelTreeController', function($scope, $rootScope, channelTree, socket) {
+'use strict';
+
+var channelTreeController = function($scope, $rootScope, channelTree, socket) {
 
     $scope.channelTree = channelTree.tree;
 
@@ -34,7 +36,7 @@ app.controller('channelTreeController', function($scope, $rootScope, channelTree
 
 	    //move node back to original position in tree.
 	    //if the position changes, server will tell us
-	    srcObjId = srcObj.isChannel? srcObj.channelId : srcObj.session;
+	    var srcObjId = srcObj.isChannel? srcObj.channelId : srcObj.session;
 	    channelTree.deleteFromTree(srcObj.isChannel, srcObjId);
 	    channelTree.insertIntoTree(srcObj, srcParent.channelId);
 	}
@@ -80,4 +82,6 @@ app.controller('channelTreeController', function($scope, $rootScope, channelTree
 	return false;
     };
     
-});
+};
+
+module.exports = channelTreeController;

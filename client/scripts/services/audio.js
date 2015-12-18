@@ -1,4 +1,6 @@
-app.service( 'audio', function(socket) {
+'use strict';
+
+var audio = function(socket) {
 
     function decodeSample(a, b) {
 	var ret = a*256 + b;
@@ -99,4 +101,6 @@ app.service( 'audio', function(socket) {
     };
 
     return service;
-});
+};
+
+module.exports = audio;

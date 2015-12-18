@@ -1,4 +1,6 @@
-app.controller('chatBoxController', function($scope, $rootScope, mumbleChat, mumbleExpressConnection, channelTree) {
+'use strict';
+
+var chatBoxController = function($scope, $rootScope, mumbleChat, mumbleExpressConnection, channelTree) {
 
     var defaultUsername = "MumbleExpress";
 
@@ -11,7 +13,7 @@ app.controller('chatBoxController', function($scope, $rootScope, mumbleChat, mum
     }
 
     $scope.getChannelNameFromId = function (channelId) {
-	node = channelTree.getFromTree(true,channelId);
+	var node = channelTree.getFromTree(true,channelId);
 	return node.name;
     };
     
@@ -100,4 +102,6 @@ app.controller('chatBoxController', function($scope, $rootScope, mumbleChat, mum
 	}
 	$scope.msg.text = '';
     };    
-});
+};
+
+module.exports = chatBoxController;

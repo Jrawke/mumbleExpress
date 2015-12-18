@@ -1,4 +1,6 @@
-app.service( 'mumbleChat', function( $rootScope , socket) {
+'use strict';
+
+var mumbleChat = function( $rootScope , socket) {
 
     var service = {
 	messages: [],
@@ -39,4 +41,6 @@ app.service( 'mumbleChat', function( $rootScope , socket) {
     };
 
     return service;
-});
+};
+
+module.exports = mumbleChat;

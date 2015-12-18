@@ -16,3 +16,4 @@ tramp
 ehthumbs.db
 Thumbs.db
 .sass-cache/
+dist/
