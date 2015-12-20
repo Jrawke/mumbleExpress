@@ -49,10 +49,10 @@ var audio = function(socket) {
 	    socket.emit('bitrate', context.sampleRate);
 	    
 	    // creates a gain node
-	    volume = context.createGain();
+	    var volume = context.createGain();
 	    
 	    // creates an audio node from the microphone incoming stream
-	    audioInput = context.createMediaStreamSource(e);
+	    var audioInput = context.createMediaStreamSource(e);
 	    
 	    // connect the stream to the gain node
 	    audioInput.connect(volume);
@@ -62,7 +62,7 @@ var audio = function(socket) {
 	       Lower values for buffer size will result in a lower (better) latency. 
 	       Higher values will be necessary to avoid audio breakup and glitches */
 	    var bufferSize = 2048;
-	    recorder = context.createScriptProcessor(bufferSize, 1, 1);
+	    var recorder = context.createScriptProcessor(bufferSize, 1, 1);
 	    
 	    recorder.onaudioprocess = function(e){
 		var input = e.inputBuffer.getChannelData(0);
