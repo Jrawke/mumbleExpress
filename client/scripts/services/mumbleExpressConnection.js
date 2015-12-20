@@ -62,10 +62,11 @@ var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, soc
     });
     
     socket.on('userState', function(state) {
+	var node;
 	if(state.name) { // a new user connected
 
 	    //create a node object for insertion into tree
-	    var node = {
+	    node = {
 		"name": state.name,
 		"session": state.session,
 		
@@ -120,6 +121,9 @@ var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, soc
 	    }
 	}
 
+	var previousMute = node.muted;
+	var previousDeaf = node.deafened;
+	
 	if(state.self_deaf==true) { //user deafened, must be mute also
 	    node.deafened = state.self_mute = true;
 	    if(node.name == loginInfo.userName) {
@@ -146,16 +150,18 @@ var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, soc
 
 	if(state.self_mute != null || state.self_deaf != null) {
 	    //log the mute/deaf to chatbox
-	    var muteDeafMessage = '';
-	    if(state.self_deaf == true)
-		muteDeafMessage = "muted and deafened";
-	    else if(state.self_deaf == false)
-		muteDeafMessage = node.muted? "undeafened" : "unmuted and undeafened";
-	    else if(state.self_mute == true)
-		muteDeafMessage = "muted";
-	    else if(state.self_mute == false)
-		muteDeafMessage = "unmuted";
-	    mumbleChat.addMessage(node.name, muteDeafMessage);
+	    var muteMessage = '';
+	    var deafMessage = '';
+
+	    if(state.self_mute != null && state.self_mute != previousMute)
+		muteMessage = state.self_mute? 'muted' : 'unmuted';
+	    if(state.self_deaf != null && state.self_deaf != previousDeaf)
+		deafMessage = state.self_deaf? 'deafened' : 'undeafened';
+
+	    if(muteMessage != '' && deafMessage != '')
+		mumbleChat.addMessage(node.name, muteMessage + ' and ' + deafMessage);
+	    else
+		mumbleChat.addMessage(node.name, muteMessage + deafMessage);
 	}
 
     });
@@ -181,7 +187,7 @@ var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, soc
     });
 
     socket.on('userRemove', function(state) {
-	node = channelTree.getFromTree(false,state.session);
+	var node = channelTree.getFromTree(false,state.session);
 	//log the disconnection to chatbox
 	mumbleChat.addMessage(node.name, "disconnected");
 
