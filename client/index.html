@@ -77,7 +77,7 @@
 	      <span ng-if="msg.channel" class="messageChannelText">(Channel)</span>
 	      <span ng-if="msg.tree" class="messageTreeText">(Channel)</span>
 	      <span ng-if="!msg.recipient" class="messageUserName">{{msg.userName}}</span>
-	      <span class="messageText">: {{msg.message}}</span>
+	      <span class="messageText" ng-bind-html="msg.message">: {{msg.message}}</span>
 	    </p>
 	  </div>
 	  <div id="chatInput">

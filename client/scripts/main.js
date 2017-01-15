@@ -9,6 +9,7 @@ var angular = require('angular'),
     angular_socket_io = require('angular-socket-io'),
     angularjs_scroll_glue = require('angularjs-scroll-glue'),
     angular_ui_tree = require('../../bower_components/angular-ui-tree/dist/angular-ui-tree.js'), //todo: fix this crazy path
+    sanitize = require('angular-sanitize'),
     //controllers
     channelTreeController = require('./controllers/channelTreeController'),
     buttonsController = require('./controllers/buttonsController'),
@@ -20,7 +21,7 @@ var angular = require('angular'),
     mumbleChat = require('./services/mumbleChat'),
     mumbleExpressConnection = require('./services/mumbleExpressConnection');
 
-var app = angular.module('mumbleExpressApp', ['luegg.directives','btford.socket-io','notification', 'ui.tree'])
+var app = angular.module('mumbleExpressApp', ['luegg.directives','btford.socket-io','notification', 'ui.tree', 'ngSanitize'])
     .factory('socket', function (socketFactory) {
 	return socketFactory();
     })
