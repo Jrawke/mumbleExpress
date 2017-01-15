@@ -76,6 +76,9 @@ var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, soc
 		"muted": (state.self_mute || state.self_deaf),
 		"deafened": state.self_deaf,
 
+		"serverMuted": (state.mute || state.deaf),
+		"serverDeafened": state.deaf,
+
 		"children": []
 	    };
 	    if(initialized) {
@@ -121,50 +124,65 @@ var mumbleExpressConnection = function( $rootScope, channelTree, mumbleChat, soc
 	    }
 	}
 
+	//update user mute/deaf
 	var previousMute = node.muted;
 	var previousDeaf = node.deafened;
-	
-	if(state.self_deaf==true) { //user deafened, must be mute also
-	    node.deafened = state.self_mute = true;
-	    if(node.name == loginInfo.userName) {
-		service.user.muted = service.user.deafened = true;
-		$rootScope.$broadcast( 'connectionUpdate' );
-	    }
-	}
 
-	if(state.self_deaf==false) { //user undeafened
+	if(state.self_deaf==true) //user deafened, must be mute also
+	    node.deafened = node.muted = true;
+	if(state.self_deaf==false) //user undeafened
 	    node.deafened = false;
-	    if(node.name == loginInfo.userName) {
-		service.user.deafened = false;
-		$rootScope.$broadcast( 'connectionUpdate' );
-	    }
-	}
-
-	if(state.self_mute!=null) { //updating user mute
+	if(state.self_mute!=null) //updating user mute
 	    node.muted=state.self_mute;
-	    if(node.name == loginInfo.userName) {
-		service.user.muted = state.self_mute;
-		$rootScope.$broadcast( 'connectionUpdate' );
-	    }
-	}
 
 	if(state.self_mute != null || state.self_deaf != null) {
 	    //log the mute/deaf to chatbox
-	    var muteMessage = '';
-	    var deafMessage = '';
+	    mumbleChat.addMessage(node.name,calculateMuteDeafMessage(
+		state.self_mute, state.self_deaf, previousMute, previousDeaf
+	    ));
+	}
 
-	    if(state.self_mute != null && state.self_mute != previousMute)
-		muteMessage = state.self_mute? 'muted' : 'unmuted';
-	    if(state.self_deaf != null && state.self_deaf != previousDeaf)
-		deafMessage = state.self_deaf? 'deafened' : 'undeafened';
+	// Update mute/deaf buttons
+	if(node.name == loginInfo.userName) {
+	    service.user.muted = node.muted;
+	    service.user.deafened = node.deafened;
+	    $rootScope.$broadcast( 'connectionUpdate' );
+	}
 
-	    if(muteMessage != '' && deafMessage != '')
-		mumbleChat.addMessage(node.name, muteMessage + ' and ' + deafMessage);
-	    else
-		mumbleChat.addMessage(node.name, muteMessage + deafMessage);
+	//update server mute/deaf
+	var previousServerMuted = node.serverMuted;
+	var previousServerDeafened = node.serverDeafened;
+
+	if(state.deaf==true) //server deafened, must be mute also
+	    node.serverDeafened = state.serverMute = true;
+	if(state.deaf==false) //server undeafened
+	    node.serverDeafened = false;
+	if(state.mute!=null) //updating server mute
+	    node.serverMuted=state.mute;
+
+	if(state.mute != null || state.deaf != null) {
+	    //log the server mute/deaf to chatbox
+	    mumbleChat.addMessage(node.name,calculateMuteDeafMessage(
+		state.mute, state.deaf, previousServerMuted, previousServerDeafened
+	    ) + " by Server");
 	}
 
     });
+
+    var calculateMuteDeafMessage = function(mute, deaf, previousMute, previousDeaf) {
+	var muteMessage = '';
+	var deafMessage = '';
+
+	if(mute != null && mute != previousMute)
+	    muteMessage = mute? 'muted' : 'unmuted';
+	if(deaf != null && deaf != previousDeaf)
+	    deafMessage = deaf? 'deafened' : 'undeafened';
+
+	if(muteMessage != '' && deafMessage != '')
+	    return muteMessage + ' and ' + deafMessage;
+	else
+	    return muteMessage + deafMessage;
+    }
 
     socket.on('channelState', function(state) {
 	var node = {

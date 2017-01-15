@@ -41,6 +41,8 @@
 		{{node.name}}
 		<img ng-if="node.muted" src="assets/icons/muted_self.svg" height="20" width="20">
 		<img ng-if="node.deafened" src="assets/icons/deafened_self.svg" height="20" width="20">
+		<img ng-if="node.serverMuted" src="assets/icons/muted_server.svg" height="20" width="20">
+		<img ng-if="node.serverDeafened" src="assets/icons/deafened_server.svg" height="20" width="20">
 	      </div>
 
 	      <!-- else, unselected node -->
@@ -49,6 +51,8 @@
 		{{node.name}}
 		<img ng-if="node.muted" src="assets/icons/muted_self.svg" height="20" width="20">
 		<img ng-if="node.deafened" src="assets/icons/deafened_self.svg" height="20" width="20">
+		<img ng-if="node.serverMuted" src="assets/icons/muted_server.svg" height="20" width="20">
+		<img ng-if="node.serverDeafened" src="assets/icons/deafened_server.svg" height="20" width="20">
 	      </div>
 	      
 	      <ol ui-tree-nodes="" ng-model="node.children">
