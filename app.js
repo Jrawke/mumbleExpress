@@ -138,6 +138,7 @@ function User(socket) {
 
     this.disconnect = function() {
 	if(mumbleClient) {
+	    _inputStream.close();
 	    mumbleClient.disconnect();
 	}
 	_isInitialized = false;
