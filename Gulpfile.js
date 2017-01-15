@@ -1,6 +1,6 @@
 var gulp = require('gulp'),
-    browserify = require('gulp-browserify'),
-    concat = require('gulp-concat'),
+    browserify = require('browserify'),
+    source = require('vinyl-source-stream');
     clean = require('gulp-clean'),
     compass = require('gulp-compass'),
     bower = require('gulp-bower');
@@ -13,12 +13,13 @@ gulp.task('clean', function() {
 
 //bundle js files for release
 gulp.task('browserify', ['angular-ui-tree'], function() {
-    gulp.src(['client/scripts/main.js'])
-	.pipe(browserify({
-	    insertGlobals: true,
-	    debug: true
-	}))
-	.pipe(concat('bundle.js'))
+    return browserify({
+	entries: ['client/scripts/main.js'],
+	insertGlobals: true,
+	debug: true
+    })
+	.bundle()
+	.pipe(source('bundle.js'))
 	.pipe(gulp.dest('dist/js'));
 });
 
