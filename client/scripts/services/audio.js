@@ -1,6 +1,6 @@
 'use strict';
 
-var audio = function(socket) {
+var audio = function(mumbleExpressConnection, socket) {
 
     function decodeSample(a, b) {
 	var ret = a*256 + b;
@@ -65,6 +65,8 @@ var audio = function(socket) {
 	    var recorder = context.createScriptProcessor(bufferSize, 1, 1);
 	    
 	    recorder.onaudioprocess = function(e){
+		if (mumbleExpressConnection.user.muted)
+		    return;
 		var input = e.inputBuffer.getChannelData(0);
 		var voiceMessage = new Uint16Array(input.length);
 		for(var i = 0; i < input.length; i++) {
