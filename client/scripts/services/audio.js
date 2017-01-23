@@ -18,41 +18,66 @@ var audio = function(mumbleExpressConnection, socket) {
 	return Math.floor(sample);
     }
 
-    var audioBufferPos = 0;
+    // Store incoming audio in circular buffer
     var audioBuffer = [];
+    var audioBufferReadPos = 0;
+    var audioBufferWritePos = 0;
+    var audioBufferMaxSize = 4096 * 100;
 
     function pcmSource() {
-	if(audioBufferPos == audioBuffer.length) {
+	if(audioBufferReadPos == audioBufferWritePos) {
 	    return 0;
-	} else {
-	    var ret = audioBuffer[audioBufferPos];
-	    delete audioBuffer[audioBufferPos];
-	    audioBufferPos++; // Could get stuck in double-precision arithmetic
-	    return ret;
+	}
+	else {
+	    if(audioBufferReadPos == audioBufferMaxSize) {
+		audioBufferReadPos = 0;
+	    }
+
+	    audioBufferReadPos++; // Could get stuck in double-precision arithmetic
+	    return audioBuffer[audioBufferReadPos];
 	}
     }
 
     socket.on('voiceMessage', function(data) {
 	data = new Uint8Array(data);
 	for(var i = 0; i < data.length; i += 2) {
-	    audioBuffer.push(decodeSample(data[i+1], data[i]));
+	    if(audioBufferWritePos == audioBufferMaxSize) {
+		audioBufferWritePos = 0;
+	    }
+
+	    if(audioBufferWritePos + 1 == audioBufferReadPos) {
+		// Buffer full, drop audio
+		return;
+	    }
+	    
+	    audioBuffer[audioBufferWritePos] = decodeSample(data[i+1], data[i]);
+	    audioBufferWritePos++;
 	}
     });
+
+    // audio objects
+    var micContext;
+    var volume;
+    var audioInput;
+    var recorder;
+
+    var speakerContext;
+    var pcmProcessingNode;
 
     var service = {
 
 	initializeMicrophone : function(e){
 	    // creates the audio context
-	    var context = new AudioContext();
+	    micContext = new AudioContext();
 	    
 	    // let the server know what bitrate we're using
-	    socket.emit('bitrate', context.sampleRate);
+	    socket.emit('bitrate', micContext.sampleRate);
 	    
 	    // creates a gain node
-	    var volume = context.createGain();
+	    volume = micContext.createGain();
 	    
 	    // creates an audio node from the microphone incoming stream
-	    var audioInput = context.createMediaStreamSource(e);
+	    audioInput = micContext.createMediaStreamSource(e);
 	    
 	    // connect the stream to the gain node
 	    audioInput.connect(volume);
@@ -62,7 +87,7 @@ var audio = function(mumbleExpressConnection, socket) {
 	       Lower values for buffer size will result in a lower (better) latency. 
 	       Higher values will be necessary to avoid audio breakup and glitches */
 	    var bufferSize = 2048;
-	    var recorder = context.createScriptProcessor(bufferSize, 1, 1);
+	    recorder = micContext.createScriptProcessor(bufferSize, 1, 1);
 	    
 	    recorder.onaudioprocess = function(e){
 		if (mumbleExpressConnection.user.muted)
@@ -77,20 +102,19 @@ var audio = function(mumbleExpressConnection, socket) {
 	    
 	    // we connect the recorder
 	    volume.connect (recorder);
-	    recorder.connect(context.destination);
+	    recorder.connect(micContext.destination);
 	},
 
 	initializeSpeakers: function() {
-	    var audioContext;
 	    try {
 		window.AudioContext = window.AudioContext || window.webkitAudioContext;
-		audioContext = new AudioContext();
+		speakerContext = new AudioContext();
 	    } catch(e) {
 		alert('Web Audio API is not supported in this browser');
 		//TODO: force set mute/deaf
 	    }
 	    var bufferSize = 4096;
-	    var pcmProcessingNode = audioContext.createScriptProcessor(bufferSize, 1, 1);
+	    pcmProcessingNode = speakerContext.createScriptProcessor(bufferSize, 1, 1);
 	    pcmProcessingNode.onaudioprocess = function(e) {
 		var output = e.outputBuffer.getChannelData(0);
 		for (var i = 0; i < bufferSize; i++) {
@@ -98,7 +122,7 @@ var audio = function(mumbleExpressConnection, socket) {
 		    output[i] = pcmSource();
 		}
 	    }
-	    pcmProcessingNode.connect(audioContext.destination);
+	    pcmProcessingNode.connect(speakerContext.destination);
 	}
     };
 
